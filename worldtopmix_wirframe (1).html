@@ -1,0 +1,2935 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>월드탑믹스 — 사이트 와이어프레임</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&display=swap');
+
+  :root {
+    --green: #2D6A4F;
+    --green-light: #40916C;
+    --green-pale: #B7E4C7;
+    --green-bg: #F0FAF4;
+    --dark: #1A1A2E;
+    --gray: #6B7280;
+    --gray-light: #F3F4F6;
+    --gray-border: #E5E7EB;
+    --white: #FFFFFF;
+    --accent: #F4A261;
+    --wire-bg: #F8F9FA;
+    --wire-box: #E2E8F0;
+    --wire-dark: #94A3B8;
+    --wire-text: #64748B;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: #0F1117;
+    color: #fff;
+    min-height: 100vh;
+  }
+
+  /* ── 툴바 ── */
+  .toolbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 56px;
+    background: #1A1D2E;
+    border-bottom: 1px solid #2D3148;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 20px;
+    z-index: 1000;
+    overflow-x: auto;
+  }
+  .toolbar-label {
+    font-size: 11px;
+    color: #6B7280;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    margin-right: 8px;
+  }
+  .page-btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid #2D3148;
+    background: transparent;
+    color: #94A3B8;
+    font-size: 12px;
+    font-family: 'Noto Sans KR', sans-serif;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .page-btn:hover { border-color: #40916C; color: #40916C; }
+  .page-btn.active {
+    background: #2D6A4F;
+    border-color: #2D6A4F;
+    color: #fff;
+  }
+  .toolbar-sep {
+    width: 1px; height: 24px;
+    background: #2D3148;
+    margin: 0 4px;
+    flex-shrink: 0;
+  }
+
+  /* ── 레이아웃 ── */
+  .stage {
+    margin-top: 56px;
+    padding: 32px 24px;
+    display: flex;
+    gap: 24px;
+  }
+
+  /* ── 사이드 패널 ── */
+  .side-panel {
+    width: 220px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 88px;
+    height: fit-content;
+  }
+  .side-title {
+    font-size: 10px;
+    font-weight: 700;
+    color: #6B7280;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .side-section {
+    margin-bottom: 20px;
+  }
+  .flow-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 6px 0;
+    font-size: 11px;
+    color: #64748B;
+    border-left: 2px solid #2D3148;
+    padding-left: 10px;
+    position: relative;
+  }
+  .flow-item.active-flow {
+    color: #40916C;
+    border-left-color: #40916C;
+  }
+  .flow-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #2D3148;
+    position: absolute;
+    left: -4px;
+    top: 10px;
+    flex-shrink: 0;
+  }
+  .flow-item.active-flow .flow-dot { background: #40916C; }
+
+  .anno-box {
+    background: #1A1D2E;
+    border: 1px solid #2D3148;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 11px;
+    color: #94A3B8;
+    line-height: 1.6;
+  }
+  .anno-box strong { color: #40916C; display: block; margin-bottom: 4px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* ── 브라우저 프레임 ── */
+  .browser-wrap {
+    flex: 1;
+    min-width: 0;
+  }
+  .browser-chrome {
+    background: #1E2235;
+    border-radius: 12px 12px 0 0;
+    padding: 10px 16px 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid #2D3148;
+    border-bottom: none;
+  }
+  .browser-dots { display: flex; gap: 5px; }
+  .browser-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .browser-dot.r { background: #FF5F56; }
+  .browser-dot.y { background: #FFBD2E; }
+  .browser-dot.g { background: #27C93F; }
+  .browser-url {
+    flex: 1;
+    background: #0F1117;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 11px;
+    color: #64748B;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .browser-screen {
+    border: 1px solid #2D3148;
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    overflow: hidden;
+    background: #fff;
+  }
+
+  /* ── 페이지 콘텐츠 공통 ── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━
+     공통 와이어프레임 컴포넌트
+  ━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  .wf-nav {
+    background: var(--wire-bg);
+    border-bottom: 2px solid var(--wire-box);
+    padding: 0 40px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .wf-logo {
+    width: 140px; height: 28px;
+    background: var(--wire-dark);
+    border-radius: 4px;
+  }
+  .wf-nav-links {
+    display: flex; gap: 24px;
+  }
+  .wf-nav-link {
+    width: 60px; height: 14px;
+    background: var(--wire-box);
+    border-radius: 3px;
+  }
+  .wf-cta-nav {
+    background: var(--green);
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .wf-footer {
+    background: #1A1A2E;
+    padding: 32px 40px;
+    margin-top: 0;
+  }
+  .wf-footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+  .wf-footer-col-title {
+    color: #94A3B8;
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .wf-footer-line {
+    height: 10px;
+    background: #2D3148;
+    border-radius: 3px;
+    margin-bottom: 6px;
+  }
+  .wf-footer-line.short { width: 60%; }
+  .wf-footer-bottom {
+    border-top: 1px solid #2D3148;
+    padding-top: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .wf-footer-copy {
+    color: #475569;
+    font-size: 11px;
+  }
+
+  .label-tag {
+    display: inline-block;
+    background: rgba(45, 106, 79, 0.15);
+    color: #40916C;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 3px;
+    border: 1px solid rgba(45, 106, 79, 0.3);
+    margin-bottom: 4px;
+  }
+  .label-tag.accent {
+    background: rgba(244, 162, 97, 0.15);
+    color: var(--accent);
+    border-color: rgba(244, 162, 97, 0.3);
+  }
+  .label-tag.gray {
+    background: rgba(100,116,139,0.1);
+    color: #94A3B8;
+    border-color: rgba(100,116,139,0.2);
+  }
+
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━
+     PAGE 1: 홈
+  ━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  .hero {
+    background: linear-gradient(135deg, #1A2E22 0%, #2D6A4F 60%, #40916C 100%);
+    min-height: 520px;
+    padding: 60px 40px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    right: -60px; top: -60px;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    right: 80px; bottom: -80px;
+    width: 280px; height: 280px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.03);
+  }
+  .hero-content { max-width: 480px; position: relative; z-index: 1; }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    color: #B7E4C7;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  .hero-h1 {
+    font-size: 38px;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+  }
+  .hero-h1 span { color: #B7E4C7; }
+  .hero-sub {
+    font-size: 14px;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.7;
+    margin-bottom: 28px;
+    max-width: 380px;
+  }
+  .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn-primary {
+    background: #fff;
+    color: #2D6A4F;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+  .btn-secondary {
+    background: transparent;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.4);
+  }
+  .hero-right {
+    position: absolute;
+    right: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 320px;
+    height: 260px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .hero-img-placeholder {
+    width: 80px; height: 80px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+  }
+  .hero-img-label { color: rgba(255,255,255,0.5); font-size: 12px; }
+
+  .stats-bar {
+    background: #fff;
+    border-bottom: 1px solid var(--wire-box);
+    padding: 20px 40px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+  }
+  .stat-item {
+    text-align: center;
+    padding: 0 20px;
+    border-right: 1px solid var(--wire-box);
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-num { font-size: 28px; font-weight: 900; color: var(--green); font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.02em; }
+  .stat-label { font-size: 11px; color: var(--gray); margin-top: 2px; }
+
+  .section {
+    padding: 48px 40px;
+    background: #fff;
+  }
+  .section.gray { background: var(--wire-bg); }
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 28px;
+  }
+  .section-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--dark);
+    letter-spacing: -0.02em;
+  }
+  .section-sub {
+    font-size: 13px;
+    color: var(--gray);
+    margin-top: 4px;
+    line-height: 1.6;
+  }
+  .section-link {
+    font-size: 12px;
+    color: var(--green);
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    white-space: nowrap;
+  }
+
+  /* 문제제기 섹션 */
+  .problem-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .problem-card {
+    background: #FFF8F3;
+    border: 1px solid #FDE8D0;
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .problem-icon { font-size: 28px; flex-shrink: 0; }
+  .problem-title { font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+  .problem-desc { font-size: 12px; color: var(--gray); line-height: 1.6; }
+
+  /* 제품 카드 */
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .product-card {
+    border: 1px solid var(--wire-box);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .product-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.1); transform: translateY(-2px); border-color: var(--green-light); }
+  .product-img {
+    height: 140px;
+    background: linear-gradient(135deg, var(--green-bg), var(--green-pale));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+  }
+  .product-info { padding: 16px; }
+  .product-name { font-size: 15px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+  .product-desc { font-size: 12px; color: var(--gray); line-height: 1.5; margin-bottom: 12px; }
+  .product-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag {
+    background: var(--green-bg);
+    color: var(--green);
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+
+  /* 시공사례 갤러리 */
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .gallery-item {
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+  }
+  .gallery-img {
+    height: 120px;
+    background: linear-gradient(135deg, #D1FAE5, #A7F3D0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    color: var(--green);
+  }
+  .gallery-label {
+    background: #fff;
+    padding: 8px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--dark);
+    border-top: 1px solid var(--wire-box);
+  }
+  .gallery-sub {
+    font-size: 10px;
+    color: var(--gray);
+    margin-top: 1px;
+  }
+
+  /* CTA 배너 */
+  .cta-banner {
+    background: linear-gradient(135deg, #1A2E22, #2D6A4F);
+    padding: 48px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .cta-text { color: #fff; }
+  .cta-title { font-size: 24px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.02em; }
+  .cta-sub { font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.6; }
+  .cta-actions { display: flex; gap: 12px; flex-shrink: 0; }
+  .btn-white { background: #fff; color: #2D6A4F; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; border: none; white-space: nowrap; }
+  .btn-outline-white { background: transparent; color: #fff; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; border: 1px solid rgba(255,255,255,0.4); white-space: nowrap; }
+
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━
+     PAGE 2: 제품 소개
+  ━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  .page-hero-small {
+    background: linear-gradient(135deg, #1A2E22, #2D6A4F);
+    padding: 36px 40px;
+    color: #fff;
+  }
+  .page-breadcrumb {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .page-h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; }
+  .page-h1-sub { font-size: 13px; color: rgba(255,255,255,0.7); margin-top: 6px; line-height: 1.6; }
+
+  .product-tab-bar {
+    background: #fff;
+    border-bottom: 1px solid var(--wire-box);
+    padding: 0 40px;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+  }
+  .product-tab {
+    padding: 16px 24px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--gray);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .product-tab.active {
+    color: var(--green);
+    border-bottom-color: var(--green);
+    font-weight: 700;
+  }
+
+  .product-detail {
+    padding: 40px;
+    background: #fff;
+  }
+  .product-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 40px;
+    align-items: start;
+    margin-bottom: 40px;
+  }
+  .product-detail-img {
+    aspect-ratio: 4/3;
+    background: linear-gradient(135deg, var(--green-bg), var(--green-pale));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 64px;
+    border: 1px solid var(--green-pale);
+  }
+  .product-detail-name { font-size: 24px; font-weight: 800; color: var(--dark); margin-bottom: 8px; }
+  .product-detail-desc { font-size: 13px; color: var(--gray); line-height: 1.7; margin-bottom: 20px; }
+  .feature-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+  .feature-item {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 12px;
+    background: var(--green-bg);
+    border-radius: 8px;
+    border-left: 3px solid var(--green);
+  }
+  .feature-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .feature-text { font-size: 13px; color: var(--dark); line-height: 1.5; }
+  .feature-text strong { font-weight: 700; display: block; margin-bottom: 2px; }
+
+  .spec-table { width: 100%; border-collapse: collapse; margin-top: 24px; }
+  .spec-table th {
+    background: var(--dark);
+    color: #fff;
+    padding: 10px 16px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .spec-table td {
+    padding: 10px 16px;
+    font-size: 12px;
+    color: var(--dark);
+    border-bottom: 1px solid var(--wire-box);
+  }
+  .spec-table tr:nth-child(even) td { background: var(--wire-bg); }
+
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━
+     PAGE 3: 시공사례
+  ━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  .filter-bar {
+    background: #fff;
+    border-bottom: 1px solid var(--wire-box);
+    padding: 16px 40px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filter-label { font-size: 12px; color: var(--gray); font-weight: 600; margin-right: 4px; }
+  .filter-btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--wire-box);
+    background: #fff;
+    font-size: 12px;
+    color: var(--gray);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .filter-btn.active {
+    background: var(--green);
+    border-color: var(--green);
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .cases-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    padding: 32px 40px;
+    background: var(--wire-bg);
+  }
+  .case-card {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--wire-box);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .case-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.08); transform: translateY(-2px); }
+  .case-before-after {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: 100px;
+  }
+  .before-img {
+    background: #FEF2F2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    position: relative;
+  }
+  .before-img::after { content: 'Before'; position: absolute; bottom: 4px; left: 6px; font-size: 9px; color: #EF4444; font-weight: 700; }
+  .after-img {
+    background: var(--green-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    position: relative;
+  }
+  .after-img::after { content: 'After'; position: absolute; bottom: 4px; right: 6px; font-size: 9px; color: var(--green); font-weight: 700; }
+  .case-info { padding: 12px 14px; }
+  .case-name { font-size: 13px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+  .case-meta { display: flex; gap: 8px; align-items: center; }
+  .case-cat { font-size: 10px; background: var(--green-bg); color: var(--green); padding: 2px 7px; border-radius: 4px; font-weight: 600; }
+  .case-year { font-size: 10px; color: var(--gray); }
+
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━
+     PAGE 4: 견적 신청
+  ━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  .quote-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    min-height: 600px;
+    background: var(--wire-bg);
+  }
+  .quote-main { padding: 32px 40px; }
+  .quote-sidebar { background: #fff; border-left: 1px solid var(--wire-box); padding: 28px 24px; }
+
+  .step-indicator {
+    display: flex;
+    gap: 0;
+    margin-bottom: 32px;
+    align-items: center;
+  }
+  .step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+  }
+  .step-circle {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--wire-box);
+    background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: var(--gray);
+    position: relative;
+    z-index: 1;
+  }
+  .step-circle.active { background: var(--green); border-color: var(--green); color: #fff; }
+  .step-circle.done { background: var(--green-pale); border-color: var(--green); color: var(--green); }
+  .step-label { font-size: 10px; color: var(--gray); text-align: center; }
+  .step-label.active { color: var(--green); font-weight: 600; }
+  .step-line {
+    flex: 1; height: 2px;
+    background: var(--wire-box);
+    margin: 0 -4px;
+    margin-bottom: 20px;
+    align-self: flex-start;
+    margin-top: 16px;
+  }
+  .step-line.done { background: var(--green); }
+
+  .quote-section-title { font-size: 18px; font-weight: 800; color: var(--dark); margin-bottom: 6px; }
+  .quote-section-sub { font-size: 13px; color: var(--gray); margin-bottom: 24px; line-height: 1.6; }
+
+  .type-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .type-card {
+    border: 2px solid var(--wire-box);
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    background: #fff;
+  }
+  .type-card:hover { border-color: var(--green-light); }
+  .type-card.selected { border-color: var(--green); background: var(--green-bg); }
+  .type-icon { font-size: 28px; flex-shrink: 0; }
+  .type-name { font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 3px; }
+  .type-ex { font-size: 11px; color: var(--gray); line-height: 1.5; }
+
+  .product-select-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .product-select-card {
+    border: 2px solid var(--wire-box);
+    border-radius: 10px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #fff;
+    text-align: center;
+  }
+  .product-select-card.selected { border-color: var(--green); background: var(--green-bg); }
+  .product-select-icon { font-size: 32px; margin-bottom: 8px; }
+  .product-select-name { font-size: 13px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+  .product-select-price { font-size: 11px; color: var(--green); font-weight: 600; }
+
+  .area-input-group {
+    background: #fff;
+    border: 1px solid var(--wire-box);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 24px;
+  }
+  .area-label { font-size: 13px; font-weight: 700; color: var(--dark); margin-bottom: 12px; }
+  .area-methods { display: flex; gap: 12px; }
+  .area-method {
+    flex: 1;
+    text-align: center;
+    padding: 16px;
+    border: 1px solid var(--wire-box);
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .area-method.active { border-color: var(--green); background: var(--green-bg); }
+  .area-method-label { font-size: 12px; font-weight: 600; color: var(--dark); margin-bottom: 8px; }
+  .area-input-row { display: flex; align-items: center; gap: 8px; justify-content: center; }
+  .area-input {
+    width: 80px;
+    padding: 8px 10px;
+    border: 1px solid var(--wire-box);
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--dark);
+    text-align: center;
+  }
+  .area-unit { font-size: 12px; color: var(--gray); font-weight: 600; }
+
+  /* 자동 견적 미리보기 */
+  .quote-preview {
+    background: #fff;
+    border: 2px solid var(--green);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+  }
+  .quote-preview-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--dark);
+    margin-bottom: 16px;
+  }
+  .quote-preview-title span { font-size: 18px; }
+  .quote-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--wire-box);
+    font-size: 13px;
+  }
+  .quote-row:last-of-type { border-bottom: none; }
+  .quote-row-label { color: var(--gray); }
+  .quote-row-value { font-weight: 600; color: var(--dark); }
+  .quote-total {
+    background: var(--green-bg);
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+  }
+  .quote-total-label { font-size: 14px; font-weight: 700; color: var(--green); }
+  .quote-total-value { font-size: 22px; font-weight: 900; color: var(--green); }
+  .quote-warning {
+    background: #FFF8F3;
+    border: 1px solid #FDE8D0;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 11px;
+    color: #B45309;
+    line-height: 1.6;
+    margin-top: 10px;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  /* 사이드바 */
+  .sidebar-title { font-size: 13px; font-weight: 800; color: var(--dark); margin-bottom: 12px; }
+  .sidebar-info-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--wire-box);
+    font-size: 12px;
+    color: var(--gray);
+    line-height: 1.6;
+  }
+  .sidebar-info-item .icon { font-size: 16px; flex-shrink: 0; }
+  .sidebar-info-item strong { color: var(--dark); font-weight: 600; display: block; margin-bottom: 2px; }
+
+  .kakao-box {
+    background: #FEE500;
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 16px;
+    cursor: pointer;
+  }
+  .kakao-icon { font-size: 22px; }
+  .kakao-text { font-size: 12px; font-weight: 700; color: #000; }
+  .kakao-sub { font-size: 10px; color: #3D3D3D; }
+
+  .form-group { margin-bottom: 16px; }
+  .form-label { font-size: 12px; font-weight: 700; color: var(--dark); margin-bottom: 6px; display: block; }
+  .form-label .required { color: #EF4444; }
+  .form-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--wire-box);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--dark);
+    background: #fff;
+    outline: none;
+  }
+  .form-input:focus { border-color: var(--green); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .upload-area {
+    border: 2px dashed var(--wire-box);
+    border-radius: 10px;
+    padding: 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--wire-bg);
+  }
+  .upload-area:hover { border-color: var(--green); background: var(--green-bg); }
+  .upload-icon { font-size: 32px; margin-bottom: 8px; }
+  .upload-text { font-size: 13px; color: var(--gray); }
+  .upload-hint { font-size: 11px; color: var(--wire-dark); margin-top: 4px; }
+
+  .submit-btn {
+    width: 100%;
+    padding: 16px;
+    background: var(--green);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .submit-btn:hover { background: var(--green-light); transform: translateY(-1px); }
+
+  /* 완료 화면 */
+  .complete-screen {
+    background: #fff;
+    padding: 60px 40px;
+    text-align: center;
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .complete-icon { font-size: 64px; margin-bottom: 16px; }
+  .complete-title { font-size: 24px; font-weight: 800; color: var(--dark); margin-bottom: 8px; }
+  .complete-sub { font-size: 14px; color: var(--gray); line-height: 1.7; margin-bottom: 28px; max-width: 360px; }
+  .complete-box {
+    background: var(--green-bg);
+    border: 1px solid var(--green-pale);
+    border-radius: 12px;
+    padding: 20px 28px;
+    text-align: left;
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 24px;
+  }
+  .complete-box-title { font-size: 12px; font-weight: 700; color: var(--green); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .complete-row { display: flex; justify-content: space-between; font-size: 13px; padding: 5px 0; border-bottom: 1px solid var(--green-pale); }
+  .complete-row:last-child { border-bottom: none; }
+  .complete-row-label { color: var(--gray); }
+  .complete-row-value { font-weight: 600; color: var(--dark); }
+  .complete-btns { display: flex; gap: 12px; }
+  .btn-kakao { background: #FEE500; color: #000; padding: 12px 20px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; border: none; display: flex; align-items: center; gap: 6px; }
+  .btn-home { background: var(--wire-bg); color: var(--dark); padding: 12px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid var(--wire-box); }
+
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━
+     PAGE 5: 회사소개
+  ━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    background: #fff;
+  }
+  .about-text-col { padding: 48px 40px; }
+  .about-img-col {
+    background: linear-gradient(135deg, var(--green-bg), var(--green-pale));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 80px;
+    min-height: 300px;
+  }
+  .about-story { font-size: 13px; color: var(--gray); line-height: 1.9; margin-bottom: 24px; }
+  .value-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .value-card {
+    background: var(--green-bg);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .value-icon { font-size: 22px; margin-bottom: 6px; }
+  .value-name { font-size: 13px; font-weight: 700; color: var(--dark); margin-bottom: 3px; }
+  .value-desc { font-size: 11px; color: var(--gray); line-height: 1.5; }
+
+  .cert-section {
+    background: var(--wire-bg);
+    padding: 40px;
+  }
+  .cert-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-top: 20px;
+  }
+  .cert-card {
+    background: #fff;
+    border: 1px solid var(--wire-box);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+  .cert-icon { font-size: 28px; margin-bottom: 6px; }
+  .cert-name { font-size: 10px; font-weight: 600; color: var(--dark); line-height: 1.4; }
+  .cert-issuer { font-size: 9px; color: var(--gray); margin-top: 2px; }
+
+  .history-section { padding: 40px; background: #fff; }
+  .history-list { position: relative; padding-left: 24px; }
+  .history-list::before {
+    content: '';
+    position: absolute;
+    left: 7px; top: 0; bottom: 0;
+    width: 2px;
+    background: var(--wire-box);
+  }
+  .history-item {
+    position: relative;
+    padding-bottom: 20px;
+    padding-left: 20px;
+  }
+  .history-item::before {
+    content: '';
+    position: absolute;
+    left: -5px; top: 5px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--green);
+  }
+  .history-year { font-size: 12px; font-weight: 700; color: var(--green); margin-bottom: 4px; }
+  .history-event { font-size: 13px; color: var(--dark); line-height: 1.6; }
+  .history-event span { color: var(--gray); font-size: 12px; }
+
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━
+     PAGE 6: 고객센터
+  ━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  .support-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    padding: 40px;
+    background: var(--wire-bg);
+  }
+  .faq-list { display: flex; flex-direction: column; gap: 8px; }
+  .faq-item {
+    background: #fff;
+    border: 1px solid var(--wire-box);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .faq-q {
+    padding: 14px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--dark);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+  }
+  .faq-q span { color: var(--green); font-size: 11px; }
+  .faq-a {
+    padding: 0 18px 14px;
+    font-size: 12px;
+    color: var(--gray);
+    line-height: 1.7;
+    background: var(--wire-bg);
+  }
+  .faq-item.open .faq-a { display: block; }
+  .faq-item .faq-a { display: none; }
+
+  .contact-card {
+    background: #fff;
+    border: 1px solid var(--wire-box);
+    border-radius: 12px;
+    padding: 24px;
+    height: fit-content;
+  }
+  .contact-card-title { font-size: 16px; font-weight: 800; color: var(--dark); margin-bottom: 16px; }
+
+  /* 내비게이션 플로팅 버튼 */
+  .floating-quote {
+    position: fixed;
+    bottom: 24px; right: 24px;
+    background: var(--green);
+    color: #fff;
+    padding: 14px 20px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 700;
+    box-shadow: 0 8px 32px rgba(45, 106, 79, 0.4);
+    cursor: pointer;
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    animation: pulse 2s infinite;
+    font-family: 'Noto Sans KR', sans-serif;
+    border: none;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 8px 32px rgba(45, 106, 79, 0.4); }
+    50% { box-shadow: 0 8px 48px rgba(45, 106, 79, 0.7); }
+  }
+
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━
+     PAGE 7: 절감 계산기
+  ━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  .savings-layout {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    min-height: 600px;
+    background: var(--wire-bg);
+  }
+  .savings-main { padding: 36px 40px; }
+  .savings-sidebar { background: #fff; border-left: 1px solid var(--wire-box); padding: 28px 24px; }
+
+  .facility-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  .facility-card {
+    border: 2px solid var(--wire-box);
+    border-radius: 10px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .facility-card:hover { border-color: var(--green-light); }
+  .facility-card.selected { border-color: var(--green); background: var(--green-bg); }
+  .facility-icon { font-size: 24px; flex-shrink: 0; }
+  .facility-name { font-size: 13px; font-weight: 700; color: var(--dark); }
+  .facility-ex { font-size: 11px; color: var(--gray); margin-top: 1px; }
+
+  .cost-input-section {
+    background: #fff;
+    border: 1px solid var(--wire-box);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .cost-input-title {
+    font-size: 14px; font-weight: 800; color: var(--dark);
+    margin-bottom: 4px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .cost-input-sub {
+    font-size: 11px; color: var(--gray); margin-bottom: 18px; line-height: 1.6;
+    background: #FFF8F3; border-radius: 6px; padding: 8px 12px;
+    border-left: 3px solid var(--accent);
+  }
+  .cost-row {
+    display: grid;
+    grid-template-columns: 1fr auto 120px auto;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--wire-box);
+  }
+  .cost-row:last-child { border-bottom: none; }
+  .cost-label { font-size: 13px; color: var(--dark); font-weight: 500; }
+  .cost-label small { display: block; font-size: 10px; color: var(--gray); font-weight: 400; margin-top: 1px; }
+  .cost-freq {
+    font-size: 11px; color: var(--gray);
+    background: var(--wire-bg);
+    padding: 4px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .cost-input-field {
+    display: flex; align-items: center; gap: 4px;
+    background: var(--wire-bg);
+    border: 1px solid var(--wire-box);
+    border-radius: 8px;
+    padding: 6px 10px;
+  }
+  .cost-input-field input {
+    width: 70px; border: none; background: transparent;
+    font-size: 14px; font-weight: 700; color: var(--dark);
+    text-align: right; outline: none;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .cost-input-field span { font-size: 11px; color: var(--gray); white-space: nowrap; }
+  .cost-toggle {
+    display: flex; gap: 4px;
+  }
+  .toggle-btn {
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--wire-box);
+    background: #fff;
+    font-size: 11px;
+    color: var(--gray);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .toggle-btn.on { background: var(--green); border-color: var(--green); color: #fff; font-weight: 700; }
+
+  .area-savings-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .area-savings-box {
+    background: #fff;
+    border: 1px solid var(--wire-box);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .area-savings-label { font-size: 12px; font-weight: 700; color: var(--dark); margin-bottom: 8px; }
+  .area-savings-input {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .area-savings-input input {
+    flex: 1; padding: 8px 12px;
+    border: 1px solid var(--wire-box);
+    border-radius: 8px;
+    font-size: 16px; font-weight: 800; color: var(--dark);
+    outline: none; text-align: right;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .area-savings-input input:focus { border-color: var(--green); }
+  .area-savings-unit { font-size: 13px; font-weight: 600; color: var(--gray); }
+
+  /* 결과 패널 */
+  .result-panel {
+    background: linear-gradient(135deg, #1A2E22, #2D6A4F);
+    border-radius: 16px;
+    padding: 28px;
+    color: #fff;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .result-panel::before {
+    content: '';
+    position: absolute;
+    right: -40px; top: -40px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+  }
+  .result-title {
+    font-size: 13px; font-weight: 700;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 20px;
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .result-main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .result-item { position: relative; z-index: 1; }
+  .result-item-label { font-size: 11px; color: rgba(255,255,255,0.6); margin-bottom: 4px; }
+  .result-item-value { font-size: 28px; font-weight: 900; color: #fff; line-height: 1; }
+  .result-item-value.accent { color: #B7E4C7; }
+  .result-item-unit { font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 2px; }
+  .result-divider { height: 1px; background: rgba(255,255,255,0.15); margin: 16px 0; }
+  .result-row {
+    display: flex; justify-content: space-between;
+    font-size: 13px; color: rgba(255,255,255,0.8);
+    padding: 4px 0;
+  }
+  .result-row strong { color: #fff; font-weight: 700; }
+  .result-payback {
+    background: rgba(255,255,255,0.12);
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 16px;
+    position: relative; z-index: 1;
+  }
+  .result-payback-label { font-size: 12px; color: rgba(255,255,255,0.8); }
+  .result-payback-value { font-size: 20px; font-weight: 900; color: #B7E4C7; }
+
+  /* 비교 바 차트 */
+  .compare-section {
+    background: #fff;
+    border: 1px solid var(--wire-box);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+  }
+  .compare-title { font-size: 13px; font-weight: 800; color: var(--dark); margin-bottom: 16px; }
+  .compare-bar-group { margin-bottom: 14px; }
+  .compare-bar-label {
+    display: flex; justify-content: space-between;
+    font-size: 12px; margin-bottom: 5px;
+  }
+  .compare-bar-name { font-weight: 600; color: var(--dark); }
+  .compare-bar-val { color: var(--gray); }
+  .compare-bar-track {
+    height: 24px; background: var(--wire-bg);
+    border-radius: 6px; overflow: hidden;
+    position: relative;
+  }
+  .compare-bar-fill {
+    height: 100%;
+    border-radius: 6px;
+    display: flex; align-items: center; padding-left: 10px;
+    font-size: 11px; font-weight: 700; color: #fff;
+    transition: width 0.8s ease;
+  }
+  .compare-bar-fill.before { background: #EF4444; }
+  .compare-bar-fill.after { background: var(--green); }
+
+  /* 케이스 스터디 카드 */
+  .case-study-grid {
+    display: flex; flex-direction: column; gap: 10px;
+    margin-bottom: 20px;
+  }
+  .case-study-card {
+    background: var(--wire-bg);
+    border: 1px solid var(--wire-box);
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+  .cs-left { flex: 1; }
+  .cs-name { font-size: 13px; font-weight: 700; color: var(--dark); margin-bottom: 3px; }
+  .cs-desc { font-size: 11px; color: var(--gray); line-height: 1.5; }
+  .cs-right { text-align: right; flex-shrink: 0; }
+  .cs-saving { font-size: 18px; font-weight: 900; color: var(--green); }
+  .cs-saving-label { font-size: 10px; color: var(--gray); }
+
+  /* 절감 항목 설명 */
+  .savings-breakdown {
+    background: var(--green-bg);
+    border: 1px solid var(--green-pale);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .breakdown-title { font-size: 12px; font-weight: 800; color: var(--green); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .breakdown-item {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--green-pale);
+    font-size: 12px;
+  }
+  .breakdown-item:last-child { border-bottom: none; }
+  .breakdown-icon { font-size: 16px; flex-shrink: 0; }
+  .breakdown-text { color: var(--dark); line-height: 1.5; }
+  .breakdown-text strong { font-weight: 700; display: block; }
+
+  /* section-divider */
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 40px;
+    background: var(--dark);
+    font-size: 10px;
+    font-weight: 700;
+    color: #64748B;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .section-divider-line { flex: 1; height: 1px; background: #2D3148; }
+
+</style>
+</head>
+<body>
+
+<!-- 툴바 -->
+<div class="toolbar">
+  <span class="toolbar-label">📐 WIREFRAME</span>
+  <div class="toolbar-sep"></div>
+  <button class="page-btn active" onclick="showPage('home', this)">🏠 홈</button>
+  <button class="page-btn" onclick="showPage('products', this)">📦 제품소개</button>
+  <button class="page-btn" onclick="showPage('cases', this)">🏗️ 시공사례</button>
+  <button class="page-btn" onclick="showPage('savings', this)">💰 절감 계산기</button>
+  <button class="page-btn" onclick="showPage('quote', this)">📋 견적신청</button>
+  <button class="page-btn" onclick="showPage('about', this)">🏢 회사소개</button>
+  <button class="page-btn" onclick="showPage('support', this)">📞 고객센터</button>
+  <div class="toolbar-sep"></div>
+  <button class="page-btn" onclick="showPage('complete', this)">✅ 견적완료</button>
+</div>
+
+<!-- 스테이지 -->
+<div class="stage">
+
+  <!-- 사이드 패널 -->
+  <div class="side-panel">
+    <div class="side-section">
+      <div class="side-title">사이트 구조</div>
+      <div class="flow-item active-flow"><div class="flow-dot"></div>홈 (/)</div>
+      <div class="flow-item"><div class="flow-dot"></div>제품소개 (/products)</div>
+      <div class="flow-item"><div class="flow-dot"></div>시공사례 (/cases)</div>
+      <div class="flow-item"><div class="flow-dot"></div>절감 계산기 (/savings)</div>
+      <div class="flow-item"><div class="flow-dot"></div>견적신청 (/quote)</div>
+      <div class="flow-item"><div class="flow-dot"></div>회사소개 (/about)</div>
+      <div class="flow-item"><div class="flow-dot"></div>고객센터 (/support)</div>
+    </div>
+
+    <div class="side-section">
+      <div class="side-title">절감 계산기 구조</div>
+      <div class="flow-item"><div class="flow-dot"></div>① 시설 유형 선택</div>
+      <div class="flow-item"><div class="flow-dot"></div>② 현재 유지비 입력</div>
+      <div class="flow-item"><div class="flow-dot"></div>③ 설치 면적 입력</div>
+      <div class="flow-item"><div class="flow-dot"></div>④ 연간 절감액 자동 계산</div>
+      <div class="flow-item"><div class="flow-dot"></div>⑤ 투자 회수 기간 표시</div>
+      <div class="flow-item"><div class="flow-dot"></div>⑥ 견적 신청 CTA 연결</div>
+    </div>
+
+    <div class="side-section">
+      <div class="side-title">견적 플로우</div>
+      <div class="flow-item"><div class="flow-dot"></div>STEP 1 장소유형</div>
+      <div class="flow-item"><div class="flow-dot"></div>STEP 2 제품+면적</div>
+      <div class="flow-item"><div class="flow-dot"></div>STEP 3 자동 견적</div>
+      <div class="flow-item"><div class="flow-dot"></div>STEP 4 현장정보</div>
+      <div class="flow-item"><div class="flow-dot"></div>STEP 5 연락처</div>
+      <div class="flow-item"><div class="flow-dot"></div>완료 + 알림톡</div>
+    </div>
+
+    <div class="anno-box" id="anno-box">
+      <strong>💡 현재 페이지</strong>
+      상단 탭을 눌러 각 페이지 와이어프레임을 확인하세요. 견적 신청 페이지에서는 실제 입력 인터랙션도 체험할 수 있습니다.
+    </div>
+  </div>
+
+  <!-- 브라우저 프레임 -->
+  <div class="browser-wrap">
+    <div class="browser-chrome">
+      <div class="browser-dots">
+        <div class="browser-dot r"></div>
+        <div class="browser-dot y"></div>
+        <div class="browser-dot g"></div>
+      </div>
+      <div class="browser-url" id="url-bar">🔒 worldtopgrating.co.kr</div>
+    </div>
+    <div class="browser-screen">
+
+      <!-- ════ PAGE: 홈 ════ -->
+      <div class="page active" id="page-home">
+        <!-- NAV -->
+        <div class="wf-nav">
+          <div class="wf-logo"></div>
+          <div class="wf-nav-links">
+            <div class="wf-nav-link"></div>
+            <div class="wf-nav-link"></div>
+            <div class="wf-nav-link"></div>
+            <div class="wf-nav-link"></div>
+          </div>
+          <div class="wf-cta-nav">견적 받기 →</div>
+        </div>
+
+        <!-- HERO -->
+        <div class="hero">
+          <div class="hero-content">
+            <div class="hero-badge">🏆 조달청 등록 · 특허 보유 친환경 그레이팅</div>
+            <div class="hero-h1">쓰레기통이 된 배수로,<br><span>이제 해결할 때입니다</span></div>
+            <div class="hero-sub">담배꽁초·끼임 사고·악취 문제를 한 번에 해결하는<br>투수 그레이팅 전문 기업 월드탑믹스</div>
+            <div class="hero-btns">
+              <button class="btn-primary" onclick="showPage('quote', document.querySelector('[onclick*=quote]'))">📋 무료 견적 받기</button>
+              <button class="btn-secondary" onclick="showPage('cases', document.querySelector('[onclick*=cases]'))">시공사례 보기</button>
+            </div>
+          </div>
+          <div class="hero-right">
+            <div class="hero-img-placeholder">🏗️</div>
+            <div class="hero-img-label">설치 전/후 사진 영역</div>
+          </div>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats-bar">
+          <div class="stat-item">
+            <div class="stat-num">150+</div>
+            <div class="stat-label">전국 시공 실적</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">12</div>
+            <div class="stat-label">보유 특허</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">3</div>
+            <div class="stat-label">제품 라인업</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">10년+</div>
+            <div class="stat-label">업력 & 노하우</div>
+          </div>
+        </div>
+
+        <!-- 문제 제기 -->
+        <div class="section gray">
+          <div class="section-header">
+            <div>
+              <div class="label-tag accent">문제 인식</div>
+              <div class="section-title">기존 그레이팅, 이런 문제 겪고 계신가요?</div>
+            </div>
+          </div>
+          <div class="problem-grid">
+            <div class="problem-card">
+              <div class="problem-icon">🚬</div>
+              <div>
+                <div class="problem-title">담배꽁초 · 쓰레기 투척</div>
+                <div class="problem-desc">배수로 가득 찬 쓰레기로 인한 악취, 해충 발생, 수질 오염까지 이어지는 악순환</div>
+              </div>
+            </div>
+            <div class="problem-card">
+              <div class="problem-icon">👠</div>
+              <div>
+                <div class="problem-title">하이힐 · 지팡이 끼임</div>
+                <div class="problem-desc">그레이팅 틈새로 인한 안전사고. 휠체어·자전거·킥보드도 위험합니다</div>
+              </div>
+            </div>
+            <div class="problem-card">
+              <div class="problem-icon">🌧️</div>
+              <div>
+                <div class="problem-title">막힌 배수로 → 침수</div>
+                <div class="problem-desc">이물질로 막혀 집중 호우 시 순식간에 침수. 유지보수 인력·비용도 문제</div>
+              </div>
+            </div>
+            <div class="problem-card">
+              <div class="problem-icon">🌫️</div>
+              <div>
+                <div class="problem-title">미세먼지 재비산</div>
+                <div class="problem-desc">기존 그레이팅 틈새로 분진이 올라와 주변 환경 악화. 특히 학교·공원 문제</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 제품 소개 -->
+        <div class="section">
+          <div class="section-header">
+            <div>
+              <div class="label-tag">제품</div>
+              <div class="section-title">3가지 라인업, 어디든 맞춤 적용</div>
+              <div class="section-sub">설치 장소에 따라 최적의 제품을 선택할 수 있습니다</div>
+            </div>
+            <a class="section-link" onclick="showPage('products', document.querySelector('[onclick*=products]'))">전체 제품 보기 →</a>
+          </div>
+          <div class="product-grid">
+            <div class="product-card">
+              <div class="product-img">🔩</div>
+              <div class="product-info">
+                <div class="product-name">기본형 그레이팅</div>
+                <div class="product-desc">우수한 투수 성능과 내구성. 학교 운동장·공원 배수로에 최적</div>
+                <div class="product-tags">
+                  <span class="tag">운동장</span><span class="tag">배수로</span><span class="tag">표준형</span>
+                </div>
+              </div>
+            </div>
+            <div class="product-card">
+              <div class="product-img">🪵</div>
+              <div class="product-info">
+                <div class="product-name">데크형 그레이팅</div>
+                <div class="product-desc">미관이 뛰어나고 보행이 쾌적. 공원·아파트·산책로에 어울림</div>
+                <div class="product-tags">
+                  <span class="tag">공원</span><span class="tag">아파트</span><span class="tag">미관형</span>
+                </div>
+              </div>
+            </div>
+            <div class="product-card">
+              <div class="product-img">🦶</div>
+              <div class="product-info">
+                <div class="product-name">발지압형 (건강365)</div>
+                <div class="product-desc">걸을 때마다 자연스러운 발 지압. 건강을 생각하는 공간에 추천</div>
+                <div class="product-tags">
+                  <span class="tag">헬스로</span><span class="tag">공원</span><span class="tag">기능형</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 시공사례 미리보기 -->
+        <div class="section gray">
+          <div class="section-header">
+            <div>
+              <div class="label-tag">시공사례</div>
+              <div class="section-title">전국 150+ 시공 실적</div>
+              <div class="section-sub">학교, 공원, 관공서, 아파트 등 다양한 현장에 적용되었습니다</div>
+            </div>
+            <a class="section-link" onclick="showPage('cases', document.querySelector('[onclick*=cases]'))">전체 보기 →</a>
+          </div>
+          <div class="gallery-grid">
+            <div class="gallery-item"><div class="gallery-img">🏫</div><div class="gallery-label">용인 삼계고등학교<div class="gallery-sub">학교 운동장 배수로 · 2023</div></div></div>
+            <div class="gallery-item"><div class="gallery-img">🌳</div><div class="gallery-label">수원 만석공원<div class="gallery-sub">공원 산책로 · 2022</div></div></div>
+            <div class="gallery-item"><div class="gallery-img">⛩️</div><div class="gallery-label">서산 해미읍성<div class="gallery-sub">역사공간 · 2022</div></div></div>
+            <div class="gallery-item"><div class="gallery-img">🏟️</div><div class="gallery-label">천안 종합운동장<div class="gallery-sub">체육시설 · 2021</div></div></div>
+            <div class="gallery-item"><div class="gallery-img">🏙️</div><div class="gallery-label">수원 SK2 아파트<div class="gallery-sub">공동주택 · 2021</div></div></div>
+            <div class="gallery-item"><div class="gallery-img">🏝️</div><div class="gallery-label">제주 탑골공원<div class="gallery-sub">관광지 · 2020</div></div></div>
+          </div>
+        </div>
+
+        <!-- CTA 배너 -->
+        <div class="cta-banner">
+          <div class="cta-text">
+            <div class="cta-title">지금 무료로 견적 받아보세요</div>
+            <div class="cta-sub">면적만 입력하면 즉시 예상 금액 확인 가능<br>1영업일 내 담당자가 최종 견적서를 보내드립니다</div>
+          </div>
+          <div class="cta-actions">
+            <button class="btn-white" onclick="showPage('quote', document.querySelector('[onclick*=quote]'))">📋 견적 받기</button>
+            <button class="btn-outline-white">💬 카카오 상담</button>
+          </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="wf-footer">
+          <div class="wf-footer-grid">
+            <div>
+              <div class="wf-footer-col-title">월드탑믹스(주)</div>
+              <div class="wf-footer-line"></div>
+              <div class="wf-footer-line short"></div>
+              <div class="wf-footer-line"></div>
+              <div class="wf-footer-line short"></div>
+            </div>
+            <div>
+              <div class="wf-footer-col-title">바로가기</div>
+              <div class="wf-footer-line short"></div>
+              <div class="wf-footer-line short"></div>
+              <div class="wf-footer-line short"></div>
+            </div>
+            <div>
+              <div class="wf-footer-col-title">제품</div>
+              <div class="wf-footer-line short"></div>
+              <div class="wf-footer-line short"></div>
+              <div class="wf-footer-line short"></div>
+            </div>
+            <div>
+              <div class="wf-footer-col-title">고객센터</div>
+              <div class="wf-footer-line short"></div>
+              <div class="wf-footer-line short"></div>
+              <div class="wf-footer-line short"></div>
+            </div>
+          </div>
+          <div class="wf-footer-bottom">
+            <div class="wf-footer-copy">© 2025 월드탑믹스(주). All rights reserved.</div>
+            <div style="display:flex; gap:16px;">
+              <div class="wf-footer-line" style="width:60px;"></div>
+              <div class="wf-footer-line" style="width:60px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════ PAGE: 제품소개 ════ -->
+      <div class="page" id="page-products">
+        <div class="wf-nav">
+          <div class="wf-logo"></div>
+          <div class="wf-nav-links"><div class="wf-nav-link"></div><div class="wf-nav-link"></div><div class="wf-nav-link"></div><div class="wf-nav-link"></div></div>
+          <div class="wf-cta-nav">견적 받기 →</div>
+        </div>
+        <div class="page-hero-small">
+          <div class="page-breadcrumb">홈 › 제품소개</div>
+          <div class="page-h1">제품 소개</div>
+          <div class="page-h1-sub">설치 장소와 목적에 맞는 최적의 투수 그레이팅을 선택하세요</div>
+        </div>
+        <div class="product-tab-bar">
+          <div class="product-tab active">전체 제품</div>
+          <div class="product-tab">기본형 그레이팅</div>
+          <div class="product-tab">데크형 그레이팅</div>
+          <div class="product-tab">발지압형 (건강365)</div>
+          <div class="product-tab">규격표 · 도면</div>
+        </div>
+        <div class="product-detail">
+          <div class="label-tag">기본형</div>
+          <div class="product-detail-grid">
+            <div class="product-detail-img">🔩</div>
+            <div>
+              <div class="product-detail-name">기본형 그레이팅</div>
+              <div class="product-detail-desc">친환경 바이오폴리머를 활용한 투수 그레이팅으로, 기존 그레이팅의 문제점인 쓰레기 투척, 끼임 사고, 배수 불량을 한 번에 해결합니다. 조달청 등록 제품으로 공공기관 납품이 용이합니다.</div>
+              <div class="feature-list">
+                <div class="feature-item"><div class="feature-icon">🛡️</div><div class="feature-text"><strong>안전성</strong>하이힐·휠체어·자전거·킥보드 끼임 방지, 미끄럼 방지 처리</div></div>
+                <div class="feature-item"><div class="feature-icon">🌿</div><div class="feature-text"><strong>친환경성</strong>바이오폴리머 소재, 반영구적 수명, 유해물질 미검출</div></div>
+                <div class="feature-item"><div class="feature-icon">💧</div><div class="feature-text"><strong>우수한 투수성</strong>홍수 피해 최소화, 토사 유실 방지, 오물 투입 차단</div></div>
+              </div>
+              <button class="submit-btn" style="margin-top:0;" onclick="showPage('quote', document.querySelector('[onclick*=quote]'))">이 제품으로 견적 받기 →</button>
+            </div>
+          </div>
+          <div class="section-title" style="font-size:16px; margin-bottom:12px;">제품 규격표</div>
+          <table class="spec-table">
+            <thead><tr><th>모델명</th><th>규격 (mm)</th><th>하중 등급</th><th>투수율</th><th>소재</th></tr></thead>
+            <tbody>
+              <tr><td>WTM-B100</td><td>500 × 500 × 100</td><td>B125</td><td>≥ 1.0 ㎝/s</td><td>바이오폴리머+골재</td></tr>
+              <tr><td>WTM-B150</td><td>500 × 500 × 150</td><td>C250</td><td>≥ 1.0 ㎝/s</td><td>바이오폴리머+골재</td></tr>
+              <tr><td>WTM-B200</td><td>1000 × 500 × 100</td><td>B125</td><td>≥ 1.0 ㎝/s</td><td>바이오폴리머+골재</td></tr>
+            </tbody>
+          </table>
+          <div style="margin-top:32px; text-align:center;">
+            <button class="submit-btn" style="max-width:280px; margin:0 auto;">📄 규격서 PDF 다운로드</button>
+          </div>
+        </div>
+        <div class="wf-footer"><div class="wf-footer-bottom"><div class="wf-footer-copy">© 2025 월드탑믹스(주)</div></div></div>
+      </div>
+
+      <!-- ════ PAGE: 시공사례 ════ -->
+      <div class="page" id="page-cases">
+        <div class="wf-nav">
+          <div class="wf-logo"></div>
+          <div class="wf-nav-links"><div class="wf-nav-link"></div><div class="wf-nav-link"></div><div class="wf-nav-link"></div><div class="wf-nav-link"></div></div>
+          <div class="wf-cta-nav">견적 받기 →</div>
+        </div>
+        <div class="page-hero-small">
+          <div class="page-breadcrumb">홈 › 시공사례</div>
+          <div class="page-h1">시공사례</div>
+          <div class="page-h1-sub">전국 150여 곳의 실제 시공 현장을 확인하세요</div>
+        </div>
+        <div class="filter-bar">
+          <span class="filter-label">카테고리:</span>
+          <button class="filter-btn active">전체</button>
+          <button class="filter-btn">학교·체육시설</button>
+          <button class="filter-btn">공원·산책로</button>
+          <button class="filter-btn">아파트·상업시설</button>
+          <button class="filter-btn">공공기관</button>
+          <button class="filter-btn">도로·주차장</button>
+        </div>
+        <div class="cases-grid">
+          <div class="case-card"><div class="case-before-after"><div class="before-img">⚠️</div><div class="after-img">✅</div></div><div class="case-info"><div class="case-name">용인 삼계고등학교</div><div class="case-meta"><span class="case-cat">학교·체육</span><span class="case-year">2023</span></div></div></div>
+          <div class="case-card"><div class="case-before-after"><div class="before-img">⚠️</div><div class="after-img">✅</div></div><div class="case-info"><div class="case-name">수원 만석공원 테니스장</div><div class="case-meta"><span class="case-cat">공원·산책로</span><span class="case-year">2022</span></div></div></div>
+          <div class="case-card"><div class="case-before-after"><div class="before-img">⚠️</div><div class="after-img">✅</div></div><div class="case-info"><div class="case-name">서산 해미읍성</div><div class="case-meta"><span class="case-cat">공공기관</span><span class="case-year">2022</span></div></div></div>
+          <div class="case-card"><div class="case-before-after"><div class="before-img">⚠️</div><div class="after-img">✅</div></div><div class="case-info"><div class="case-name">인천체육고등학교</div><div class="case-meta"><span class="case-cat">학교·체육</span><span class="case-year">2022</span></div></div></div>
+          <div class="case-card"><div class="case-before-after"><div class="before-img">⚠️</div><div class="after-img">✅</div></div><div class="case-info"><div class="case-name">안산 호수공원</div><div class="case-meta"><span class="case-cat">공원·산책로</span><span class="case-year">2021</span></div></div></div>
+          <div class="case-card"><div class="case-before-after"><div class="before-img">⚠️</div><div class="after-img">✅</div></div><div class="case-info"><div class="case-name">수원 SK2 아파트</div><div class="case-meta"><span class="case-cat">아파트·상업</span><span class="case-year">2021</span></div></div></div>
+          <div class="case-card"><div class="case-before-after"><div class="before-img">⚠️</div><div class="after-img">✅</div></div><div class="case-info"><div class="case-name">천안 종합운동장 광장</div><div class="case-meta"><span class="case-cat">공공기관</span><span class="case-year">2021</span></div></div></div>
+          <div class="case-card"><div class="case-before-after"><div class="before-img">⚠️</div><div class="after-img">✅</div></div><div class="case-info"><div class="case-name">화성시 송산중</div><div class="case-meta"><span class="case-cat">학교·체육</span><span class="case-year">2020</span></div></div></div>
+          <div class="case-card"><div class="case-before-after"><div class="before-img">⚠️</div><div class="after-img">✅</div></div><div class="case-info"><div class="case-name">제주시 탑골공원</div><div class="case-meta"><span class="case-cat">공원·산책로</span><span class="case-year">2020</span></div></div></div>
+        </div>
+        <div class="wf-footer"><div class="wf-footer-bottom"><div class="wf-footer-copy">© 2025 월드탑믹스(주)</div></div></div>
+      </div>
+
+      <!-- ════ PAGE: 견적신청 ════ -->
+      <div class="page" id="page-quote">
+        <div class="wf-nav">
+          <div class="wf-logo"></div>
+          <div class="wf-nav-links"><div class="wf-nav-link"></div><div class="wf-nav-link"></div><div class="wf-nav-link"></div><div class="wf-nav-link"></div></div>
+          <div class="wf-cta-nav">견적 받기 →</div>
+        </div>
+        <div class="page-hero-small" style="padding:24px 40px;">
+          <div class="page-breadcrumb">홈 › 견적 신청</div>
+          <div class="page-h1">무료 견적 신청</div>
+          <div class="page-h1-sub">면적을 입력하면 즉시 예상 금액을 확인할 수 있습니다</div>
+        </div>
+        <div class="quote-layout">
+          <!-- 메인 폼 -->
+          <div class="quote-main">
+            <!-- 스텝 인디케이터 -->
+            <div class="step-indicator">
+              <div class="step"><div class="step-circle done">✓</div><div class="step-label active">장소 유형</div></div>
+              <div class="step-line done"></div>
+              <div class="step"><div class="step-circle active">2</div><div class="step-label active">제품 + 면적</div></div>
+              <div class="step-line"></div>
+              <div class="step"><div class="step-circle">3</div><div class="step-label">현장 정보</div></div>
+              <div class="step-line"></div>
+              <div class="step"><div class="step-circle">4</div><div class="step-label">연락처</div></div>
+            </div>
+
+            <!-- STEP 1: 장소 유형 -->
+            <div class="quote-section-title">어디에 설치하실 예정인가요?</div>
+            <div class="quote-section-sub">설치 장소를 선택하면 맞춤 제품을 추천해 드립니다</div>
+            <div class="type-grid">
+              <div class="type-card selected" onclick="selectType(this)">
+                <div class="type-icon">🏠</div>
+                <div><div class="type-name">아파트 · 주택</div><div class="type-ex">공동주택 배수로, 개인 정원, 마당</div></div>
+              </div>
+              <div class="type-card" onclick="selectType(this)">
+                <div class="type-icon">🏫</div>
+                <div><div class="type-name">학교 · 공공기관</div><div class="type-ex">운동장 주변, 공원, 관공서, 체육시설</div></div>
+              </div>
+              <div class="type-card" onclick="selectType(this)">
+                <div class="type-icon">🏪</div>
+                <div><div class="type-name">상가 · 건물</div><div class="type-ex">건물 외부, 주차장, 호텔 및 상가 등 상업시설</div></div>
+              </div>
+              <div class="type-card" onclick="selectType(this)">
+                <div class="type-icon">🚧</div>
+                <div><div class="type-name">조경 · 건설현장</div><div class="type-ex">신축공사, 조경 프로젝트, 대량 납품</div></div>
+              </div>
+            </div>
+
+            <!-- STEP 2: 제품 선택 -->
+            <div class="quote-section-title">제품을 선택하고 면적을 입력해 주세요</div>
+            <div class="quote-section-sub">정확하지 않아도 괜찮아요. 담당자가 현장 확인 후 조정해 드립니다</div>
+            <div class="product-select-grid">
+              <div class="product-select-card selected" onclick="selectProduct(this, 25000, 15000)">
+                <div class="product-select-icon">🔩</div>
+                <div class="product-select-name">기본형</div>
+                <div class="product-select-price">제품 ₩25,000/㎡~</div>
+              </div>
+              <div class="product-select-card" onclick="selectProduct(this, 32000, 18000)">
+                <div class="product-select-icon">🪵</div>
+                <div class="product-select-name">데크형</div>
+                <div class="product-select-price">제품 ₩32,000/㎡~</div>
+              </div>
+              <div class="product-select-card" onclick="selectProduct(this, 38000, 18000)">
+                <div class="product-select-icon">🦶</div>
+                <div class="product-select-name">발지압형</div>
+                <div class="product-select-price">제품 ₩38,000/㎡~</div>
+              </div>
+            </div>
+
+            <!-- 면적 입력 -->
+            <div class="area-input-group">
+              <div class="area-label">📐 설치 면적 입력</div>
+              <div class="area-methods">
+                <div class="area-method active">
+                  <div class="area-method-label">㎡로 직접 입력</div>
+                  <div class="area-input-row">
+                    <input class="area-input" type="number" value="50" oninput="calcQuote()" id="area-sqm">
+                    <span class="area-unit">㎡</span>
+                  </div>
+                </div>
+                <div class="area-method">
+                  <div class="area-method-label">가로 × 세로 계산</div>
+                  <div class="area-input-row">
+                    <input class="area-input" type="number" placeholder="5" oninput="calcFromWH()" id="area-w" style="width:60px;">
+                    <span class="area-unit">m ×</span>
+                    <input class="area-input" type="number" placeholder="10" oninput="calcFromWH()" id="area-h" style="width:60px;">
+                    <span class="area-unit">m</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 자동 견적 미리보기 -->
+            <div class="quote-preview">
+              <div class="quote-preview-title"><span>📊</span>예상 견적 미리보기</div>
+              <div class="quote-row"><span class="quote-row-label">선택 제품</span><span class="quote-row-value" id="qp-product">기본형 그레이팅</span></div>
+              <div class="quote-row"><span class="quote-row-label">설치 면적</span><span class="quote-row-value" id="qp-area">50 ㎡</span></div>
+              <div class="quote-row"><span class="quote-row-label">제품 단가</span><span class="quote-row-value" id="qp-pprice">₩25,000/㎡</span></div>
+              <div class="quote-row"><span class="quote-row-label">제품 금액</span><span class="quote-row-value" id="qp-pamount">₩1,250,000</span></div>
+              <div class="quote-row"><span class="quote-row-label">시공 단가</span><span class="quote-row-value" id="qp-wprice">₩15,000/㎡</span></div>
+              <div class="quote-row"><span class="quote-row-label">시공 금액</span><span class="quote-row-value" id="qp-wamount">₩750,000</span></div>
+              <div class="quote-total">
+                <div class="quote-total-label">💰 예상 합계 (VAT 별도)</div>
+                <div class="quote-total-value" id="qp-total">₩2,000,000</div>
+              </div>
+              <div class="quote-warning">
+                ⚠️ 이 금액은 <strong>자동 계산된 참고 금액</strong>입니다. 실제 금액은 현장 규격·시공 조건에 따라 달라질 수 있으며, 담당자가 현장 확인 후 <strong>최종 견적서</strong>를 발송해 드립니다.
+              </div>
+            </div>
+
+            <!-- STEP 3: 현장 정보 -->
+            <div class="quote-section-title" style="margin-top:8px;">설치 현장 정보</div>
+            <div class="form-row" style="margin-bottom:12px;">
+              <div class="form-group" style="margin:0;">
+                <label class="form-label">설치 주소 <span class="required">*</span></label>
+                <input class="form-input" type="text" placeholder="도로명 주소 검색">
+              </div>
+              <div class="form-group" style="margin:0;">
+                <label class="form-label">상세 주소</label>
+                <input class="form-input" type="text" placeholder="동/호수, 층수 등">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">현장 사진 첨부 <span style="color:var(--gray); font-weight:400;">(선택 · 최대 5장)</span></label>
+              <div class="upload-area">
+                <div class="upload-icon">📷</div>
+                <div class="upload-text">클릭하거나 사진을 여기에 끌어오세요</div>
+                <div class="upload-hint">배수로 현황, 설치 예정 구역 사진을 첨부하면 더 정확한 견적이 가능합니다</div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">추가 요청사항</label>
+              <input class="form-input" type="text" placeholder="특수 규격, 색상 요청, 기타 문의 사항을 입력해 주세요">
+            </div>
+
+            <!-- STEP 4: 연락처 -->
+            <div class="quote-section-title" style="margin-top:8px;">연락처 입력</div>
+            <div class="form-row">
+              <div class="form-group" style="margin:0;">
+                <label class="form-label">이름 <span class="required">*</span></label>
+                <input class="form-input" type="text" placeholder="홍길동">
+              </div>
+              <div class="form-group" style="margin:0;">
+                <label class="form-label">연락처 <span class="required">*</span></label>
+                <input class="form-input" type="tel" placeholder="010-0000-0000">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">이메일 <span style="color:var(--gray); font-weight:400;">(선택)</span></label>
+              <input class="form-input" type="email" placeholder="example@email.com">
+            </div>
+            <div style="background:var(--wire-bg); border:1px solid var(--wire-box); border-radius:8px; padding:12px 16px; font-size:11px; color:var(--gray); margin-bottom:20px; line-height:1.7;">
+              ☑ <strong style="color:var(--dark);">개인정보 수집 및 이용 동의 (필수)</strong> — 견적 신청 처리를 위한 최소한의 정보를 수집합니다<br>
+              ☐ <strong style="color:var(--dark);">마케팅 정보 수신 동의 (선택)</strong> — 제품 업데이트, 시공사례 등 정보를 받아보실 수 있습니다
+            </div>
+
+            <button class="submit-btn" onclick="showPage('complete', document.querySelector('[onclick*=complete]'))">
+              📋 견적 신청하기 — 카카오 알림톡으로 접수 확인
+            </button>
+          </div>
+
+          <!-- 사이드바 -->
+          <div class="quote-sidebar">
+            <div class="sidebar-title">📋 신청 안내</div>
+            <div class="sidebar-info-item"><div class="icon">⚡</div><div><strong>즉시 예상 금액 확인</strong>면적 입력 시 자동으로 예상 금액을 계산해 드립니다</div></div>
+            <div class="sidebar-info-item"><div class="icon">📱</div><div><strong>카카오 알림톡 발송</strong>신청 즉시 접수 확인 알림톡이 발송됩니다</div></div>
+            <div class="sidebar-info-item"><div class="icon">📅</div><div><strong>1영업일 내 연락</strong>담당자가 현장 확인 후 최종 견적서를 보내드립니다</div></div>
+            <div class="sidebar-info-item"><div class="icon">🔧</div><div><strong>무료 현장 방문</strong>수도권 지역 무료 현장 방문 견적 가능</div></div>
+
+            <div style="margin:20px 0 12px; border-top:1px solid var(--wire-box); padding-top:16px;">
+              <div class="sidebar-title">💬 바로 상담하기</div>
+            </div>
+            <div class="kakao-box">
+              <div class="kakao-icon">💬</div>
+              <div><div class="kakao-text">카카오톡 채널 상담</div><div class="kakao-sub">평일 09:00~18:00 실시간 답변</div></div>
+            </div>
+            <div style="margin-top:12px; background:var(--wire-bg); border-radius:10px; padding:14px 16px; font-size:12px; color:var(--dark);">
+              <div style="font-weight:700; margin-bottom:6px;">📞 전화 상담</div>
+              <div style="font-size:16px; font-weight:800; color:var(--green);">031-239-3001</div>
+              <div style="font-size:11px; color:var(--gray); margin-top:3px;">평일 09:00 ~ 18:00</div>
+            </div>
+
+            <div style="margin-top:20px; border-top:1px solid var(--wire-box); padding-top:16px;">
+              <div class="sidebar-title" style="margin-bottom:8px;">🏷️ 임시 단가 기준</div>
+              <div style="background:#FFF8F3; border:1px solid #FDE8D0; border-radius:8px; padding:12px; font-size:11px; color:#B45309; line-height:1.7;">
+                ⚠️ 현재 임시 단가 기준입니다.<br>실제 단가 입력 후 업데이트 예정<br><br>
+                <strong>기본형</strong> 제품 ₩25,000 · 시공 ₩15,000<br>
+                <strong>데크형</strong> 제품 ₩32,000 · 시공 ₩18,000<br>
+                <strong>발지압형</strong> 제품 ₩38,000 · 시공 ₩18,000
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="wf-footer"><div class="wf-footer-bottom"><div class="wf-footer-copy">© 2025 월드탑믹스(주)</div></div></div>
+      </div>
+
+      <!-- ════ PAGE: 견적 완료 ════ -->
+      <div class="page" id="page-complete">
+        <div class="wf-nav">
+          <div class="wf-logo"></div>
+          <div class="wf-nav-links"><div class="wf-nav-link"></div><div class="wf-nav-link"></div><div class="wf-nav-link"></div><div class="wf-nav-link"></div></div>
+          <div class="wf-cta-nav">견적 받기 →</div>
+        </div>
+        <div class="complete-screen">
+          <div class="complete-icon">✅</div>
+          <div class="complete-title">견적 신청이 완료되었습니다!</div>
+          <div class="complete-sub">입력하신 연락처(010-XXXX-XXXX)로 카카오 알림톡을 발송했습니다.<br>담당자가 <strong>1영업일 내</strong>로 최종 견적서를 보내드립니다.</div>
+          <div class="complete-box">
+            <div class="complete-box-title">📋 접수 내용 요약</div>
+            <div class="complete-row"><span class="complete-row-label">접수 번호</span><span class="complete-row-value">#2025-0219-001</span></div>
+            <div class="complete-row"><span class="complete-row-label">선택 제품</span><span class="complete-row-value">기본형 그레이팅</span></div>
+            <div class="complete-row"><span class="complete-row-label">설치 면적</span><span class="complete-row-value">50 ㎡</span></div>
+            <div class="complete-row"><span class="complete-row-label">예상 금액</span><span class="complete-row-value" style="color:var(--green);">₩2,000,000 (VAT 별도)</span></div>
+            <div class="complete-row"><span class="complete-row-label">담당자 연락</span><span class="complete-row-value">1영업일 내</span></div>
+          </div>
+          <div style="font-size:12px; color:var(--gray); margin-bottom:20px; text-align:center; line-height:1.7;">
+            긴급 문의: <strong style="color:var(--dark);">010-5262-3300</strong> · 평일 09:00~18:00
+          </div>
+          <div class="complete-btns">
+            <button class="btn-kakao">💬 카카오톡 채널 추가</button>
+            <button class="btn-home" onclick="showPage('home', document.querySelector('[onclick*=home]'))">홈으로 돌아가기</button>
+          </div>
+        </div>
+        <div class="wf-footer"><div class="wf-footer-bottom"><div class="wf-footer-copy">© 2025 월드탑믹스(주)</div></div></div>
+      </div>
+
+      <!-- ════ PAGE: 회사소개 ════ -->
+      <div class="page" id="page-about">
+        <div class="wf-nav">
+          <div class="wf-logo"></div>
+          <div class="wf-nav-links"><div class="wf-nav-link"></div><div class="wf-nav-link"></div><div class="wf-nav-link"></div><div class="wf-nav-link"></div></div>
+          <div class="wf-cta-nav">견적 받기 →</div>
+        </div>
+
+        <!-- 히어로: 한 줄 정체성 -->
+        <div class="page-hero-small" style="padding: 48px 40px 40px;">
+          <div class="page-breadcrumb">홈 › 회사소개</div>
+          <div class="page-h1" style="font-size:32px;">친환경 투수 그레이팅 전문 제조기업</div>
+          <div class="page-h1-sub" style="margin-top:10px; font-size:14px; max-width:560px;">
+            월드탑믹스(주)는 배수로 환경 문제를 해결하는 투수 그레이팅을 직접 제조·시공하는 전문기업입니다.<br>
+            경기도 화성 본사·공장 운영 / 수원 영업사무소 / 전국 시공 가능
+          </div>
+        </div>
+
+        <!-- ① 숫자로 말하는 신뢰 -->
+        <div style="background:#fff; border-bottom: 2px solid var(--wire-box);">
+          <div style="display:grid; grid-template-columns: repeat(5,1fr); padding: 0 40px;">
+            <div style="text-align:center; padding: 28px 16px; border-right:1px solid var(--wire-box);">
+              <div class="stat-num">10년+</div>
+              <div class="stat-label">업력 및 현장 경험</div>
+            </div>
+            <div style="text-align:center; padding: 28px 16px; border-right:1px solid var(--wire-box);">
+              <div class="stat-num">150+</div>
+              <div class="stat-label">전국 시공 실적</div>
+            </div>
+            <div style="text-align:center; padding: 28px 16px; border-right:1px solid var(--wire-box);">
+              <div class="stat-num">12건</div>
+              <div class="stat-label">보유 특허</div>
+            </div>
+            <div style="text-align:center; padding: 28px 16px; border-right:1px solid var(--wire-box);">
+              <div class="stat-num">2곳</div>
+              <div class="stat-label">직영 공장 (화성)</div>
+            </div>
+            <div style="text-align:center; padding: 28px 16px;">
+              <div class="stat-num">조달청</div>
+              <div class="stat-label">등록 우수제품</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ② 회사 소개 + 역량 -->
+        <div style="background:#fff; padding: 48px 40px; display:grid; grid-template-columns:1.1fr 1fr; gap:48px; align-items:start;">
+          <div>
+            <div class="label-tag">회사 소개</div>
+            <div class="section-title" style="margin: 10px 0 16px; font-size:20px;">투수 그레이팅, 처음부터 끝까지<br>직접 만들고 직접 시공합니다</div>
+            <div class="about-story">
+              월드탑믹스(주)는 친환경 바이오폴리머 소재를 활용한 투수 그레이팅을 직접 제조·공급·시공하는 전문기업입니다. 경기도 화성에 본사와 2개 공장을 운영하며, 수원 사무소를 통해 수도권 전역의 영업·시공을 담당합니다.<br><br>
+              중간 유통 없이 공장 직납 구조로 합리적인 가격을 제공하며, 조달청 우수제품 등록을 통해 학교·공공기관·지자체 납품 실적을 꾸준히 쌓아왔습니다. 아파트, 공원, 운동장, 관공서 등 배수로가 있는 모든 현장에 맞춤 적용이 가능합니다.
+            </div>
+          </div>
+          <div>
+            <div class="label-tag">우리가 잘하는 것</div>
+            <div style="display:flex; flex-direction:column; gap:10px; margin-top:12px;">
+              <div style="display:flex; gap:14px; align-items:flex-start; padding:16px; background:var(--wire-bg); border-radius:10px; border-left:3px solid var(--green);">
+                <div style="font-size:22px; flex-shrink:0;">🏭</div>
+                <div><div style="font-size:13px; font-weight:700; color:var(--dark); margin-bottom:3px;">공장 직납 · 맞춤 규격 제작</div><div style="font-size:12px; color:var(--gray); line-height:1.6;">중간 마진 없는 직납 구조. 비표준 규격도 주문 제작 가능</div></div>
+              </div>
+              <div style="display:flex; gap:14px; align-items:flex-start; padding:16px; background:var(--wire-bg); border-radius:10px; border-left:3px solid var(--green);">
+                <div style="font-size:22px; flex-shrink:0;">🔧</div>
+                <div><div style="font-size:13px; font-weight:700; color:var(--dark); margin-bottom:3px;">전국 시공 · 현장 방문 가능</div><div style="font-size:12px; color:var(--gray); line-height:1.6;">수도권 무료 현장 방문. 전국 협력 시공팀 네트워크 운영</div></div>
+              </div>
+              <div style="display:flex; gap:14px; align-items:flex-start; padding:16px; background:var(--wire-bg); border-radius:10px; border-left:3px solid var(--green);">
+                <div style="font-size:22px; flex-shrink:0;">🏛️</div>
+                <div><div style="font-size:13px; font-weight:700; color:var(--dark); margin-bottom:3px;">조달청 등록 · 공공기관 납품</div><div style="font-size:12px; color:var(--gray); line-height:1.6;">나라장터 등록. 학교·지자체·공공기관 입찰·수의계약 가능</div></div>
+              </div>
+              <div style="display:flex; gap:14px; align-items:flex-start; padding:16px; background:var(--wire-bg); border-radius:10px; border-left:3px solid var(--green);">
+                <div style="font-size:22px; flex-shrink:0;">🔄</div>
+                <div><div style="font-size:13px; font-weight:700; color:var(--dark); margin-bottom:3px;">설치 후 A/S · 유지보수</div><div style="font-size:12px; color:var(--gray); line-height:1.6;">시공 완료 후 1년 무상 A/S. 장기 유지보수 계약 별도 가능</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ③ 인증 & 수상 -->
+        <div class="cert-section">
+          <div class="label-tag">인증 · 수상 · 등록</div>
+          <div class="section-title" style="margin-top:8px;">공인된 품질, 검증된 신뢰</div>
+          <div style="font-size:13px; color:var(--gray); margin-top:4px; margin-bottom:20px;">제3자 기관이 인정한 제품 품질과 기술력을 바탕으로 공공·민간 모든 현장에 공급합니다</div>
+          <div class="cert-grid">
+            <div class="cert-card" style="border-top:3px solid var(--green);">
+              <div class="cert-icon">🏆</div>
+              <div class="cert-name">조달청 우수제품 등록</div>
+              <div class="cert-issuer">조달청 · 나라장터</div>
+            </div>
+            <div class="cert-card" style="border-top:3px solid var(--green);">
+              <div class="cert-icon">📜</div>
+              <div class="cert-name">특허 12건 보유</div>
+              <div class="cert-issuer">특허청</div>
+            </div>
+            <div class="cert-card" style="border-top:3px solid var(--green);">
+              <div class="cert-icon">🌱</div>
+              <div class="cert-name">친환경 소재 인증</div>
+              <div class="cert-issuer">환경부</div>
+            </div>
+            <div class="cert-card" style="border-top:3px solid var(--green);">
+              <div class="cert-icon">🔬</div>
+              <div class="cert-name">유해물질 무검출</div>
+              <div class="cert-issuer">SGS Korea 시험성적서</div>
+            </div>
+            <div class="cert-card" style="border-top:3px solid var(--green);">
+              <div class="cert-icon">✅</div>
+              <div class="cert-name">단체표준인증</div>
+              <div class="cert-issuer">한국표준협회</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ④ 연혁 + 공장 사진 -->
+        <div style="background:#fff; padding:48px 40px; display:grid; grid-template-columns:1fr 1fr; gap:48px;">
+          <div>
+            <div class="label-tag">연혁</div>
+            <div class="section-title" style="margin:10px 0 24px; font-size:20px;">걸어온 길</div>
+            <div class="history-list">
+              <div class="history-item">
+                <div class="history-year">2024</div>
+                <div class="history-event">제2공장 준공 (경기도 화성시 비봉면)<span> · 생산 역량 2배 확대</span></div>
+              </div>
+              <div class="history-item">
+                <div class="history-year">2022</div>
+                <div class="history-event">전국 시공 100개소 돌파<span> · 소백산·북한산 국립공원 적용</span></div>
+              </div>
+              <div class="history-item">
+                <div class="history-year">2020</div>
+                <div class="history-event">조달청 우수제품 등록<span> · 공공기관·지자체 납품 본격화</span></div>
+              </div>
+              <div class="history-item">
+                <div class="history-year">2018</div>
+                <div class="history-event">특허 10건 돌파<span> · 친환경 소재 인증 취득</span></div>
+              </div>
+              <div class="history-item">
+                <div class="history-year">2017</div>
+                <div class="history-event">수원 영업사무소(자이언스틸) 개소<span> · 수도권 영업 강화</span></div>
+              </div>
+              <div class="history-item">
+                <div class="history-year">2015</div>
+                <div class="history-event">월드탑믹스(주) 설립 · 본사·제1공장 준공<span> · 투수 그레이팅 첫 출시</span></div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="label-tag">공장 · 시설</div>
+            <div class="section-title" style="margin:10px 0 16px; font-size:20px;">직영 생산 시설</div>
+            <div style="display:flex; flex-direction:column; gap:12px;">
+              <div style="background:linear-gradient(135deg, var(--green-bg), var(--green-pale)); border-radius:12px; height:120px; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:6px; border:1px solid var(--green-pale);">
+                <div style="font-size:36px;">🏭</div>
+                <div style="font-size:12px; font-weight:700; color:var(--green);">제1공장 · 본사</div>
+                <div style="font-size:11px; color:var(--gray);">경기도 화성시 향남읍</div>
+              </div>
+              <div style="background:linear-gradient(135deg, var(--green-bg), var(--green-pale)); border-radius:12px; height:120px; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:6px; border:1px solid var(--green-pale);">
+                <div style="font-size:36px;">🏗️</div>
+                <div style="font-size:12px; font-weight:700; color:var(--green);">제2공장 (2024년 준공)</div>
+                <div style="font-size:11px; color:var(--gray);">경기도 화성시 비봉면</div>
+              </div>
+              <div style="background:var(--wire-bg); border:1px solid var(--wire-box); border-radius:10px; padding:14px 16px; font-size:12px; color:var(--gray); line-height:1.7;">
+                📍 실제 공장 사진 삽입 영역<br>
+                <span style="color:var(--wire-dark); font-size:11px;">제조 공정, 품질 검사, 완제품 사진 등 3~4장 갤러리</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ⑤ 오시는 길 -->
+        <div class="section gray" style="padding:40px;">
+          <div class="label-tag">오시는 길</div>
+          <div class="section-title" style="margin:10px 0 20px; font-size:20px;">사무소 및 공장 위치</div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
+            <div style="background:#fff; border:1px solid var(--wire-box); border-radius:12px; padding:20px;">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+                <div style="font-size:20px;">🏢</div>
+                <div>
+                  <div style="font-weight:800; color:var(--dark); font-size:14px;">수원 영업사무소</div>
+                  <div style="font-size:10px; color:var(--green); font-weight:600; background:var(--green-bg); display:inline-block; padding:1px 6px; border-radius:4px; margin-top:2px;">견적·영업 문의 창구</div>
+                </div>
+              </div>
+              <div style="font-size:12px; color:var(--gray); line-height:2;">
+                수원시 권선구 덕영대로 1201번길 36, 5층<br>
+                📞 <strong style="color:var(--dark);">031-239-3001</strong><br>
+                📠 031-239-3008<br>
+                🕐 평일 09:00 ~ 18:00
+              </div>
+            </div>
+            <div style="background:#fff; border:1px solid var(--wire-box); border-radius:12px; padding:20px;">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+                <div style="font-size:20px;">🏭</div>
+                <div>
+                  <div style="font-weight:800; color:var(--dark); font-size:14px;">본사 및 제1공장</div>
+                  <div style="font-size:10px; color:var(--gray); font-weight:600; background:var(--wire-bg); display:inline-block; padding:1px 6px; border-radius:4px; margin-top:2px;">제조·생산 시설</div>
+                </div>
+              </div>
+              <div style="font-size:12px; color:var(--gray); line-height:2;">
+                경기도 화성시 향남읍 백토리 67-2<br>
+                📞 <strong style="color:var(--dark);">031-297-7380</strong><br>
+                📠 031-297-7382<br>
+                🕐 평일 09:00 ~ 18:00
+              </div>
+            </div>
+          </div>
+          <div style="background:#fff; border:1px solid var(--wire-box); border-radius:12px; height:220px; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:8px; color:var(--gray);">
+            <div style="font-size:32px;">🗺️</div>
+            <div style="font-size:13px; font-weight:600;">지도 영역</div>
+            <div style="font-size:11px; color:var(--wire-dark);">카카오맵 API 연동 · 수원 사무소 + 화성 공장 핀 표시</div>
+          </div>
+        </div>
+
+        <div class="wf-footer"><div class="wf-footer-bottom"><div class="wf-footer-copy">© 2025 월드탑믹스(주)</div></div></div>
+      </div>
+
+      <!-- ════ PAGE: 고객센터 ════ -->
+      <div class="page" id="page-support">
+        <div class="wf-nav">
+          <div class="wf-logo"></div>
+          <div class="wf-nav-links"><div class="wf-nav-link"></div><div class="wf-nav-link"></div><div class="wf-nav-link"></div><div class="wf-nav-link"></div></div>
+          <div class="wf-cta-nav">견적 받기 →</div>
+        </div>
+        <div class="page-hero-small">
+          <div class="page-breadcrumb">홈 › 고객센터</div>
+          <div class="page-h1">고객센터</div>
+          <div class="page-h1-sub">궁금한 점은 언제든지 문의해 주세요</div>
+        </div>
+        <div class="support-grid">
+          <!-- FAQ -->
+          <div>
+            <div class="label-tag" style="margin-bottom:8px;">자주 묻는 질문</div>
+            <div class="faq-list">
+              <div class="faq-item open">
+                <div class="faq-q">설치 기간은 얼마나 걸리나요? <span>▲ 닫기</span></div>
+                <div class="faq-a">현장 규모에 따라 다르지만, 일반 주택·아파트는 1~2일, 학교·공원은 3~5일 정도 소요됩니다. 견적 확정 후 담당자가 상세 일정을 안내드립니다.</div>
+              </div>
+              <div class="faq-item">
+                <div class="faq-q">A/S는 어떻게 진행되나요? <span>▼ 열기</span></div>
+                <div class="faq-a" style="display:none;">시공 완료 후 1년간 무상 A/S가 제공됩니다. 이후에는 유상 A/S가 진행되며, 전화 또는 카카오 채널로 접수하시면 됩니다.</div>
+              </div>
+              <div class="faq-item">
+                <div class="faq-q">가격대는 어느 정도인가요? <span>▼ 열기</span></div>
+                <div class="faq-a" style="display:none;">제품 및 시공 합계 기준으로 ㎡당 약 3~6만원 수준입니다. 정확한 금액은 견적 신청 후 담당자가 안내드립니다.</div>
+              </div>
+              <div class="faq-item">
+                <div class="faq-q">기존 그레이팅 위에 덮어씌울 수 있나요? <span>▼ 열기</span></div>
+                <div class="faq-a" style="display:none;">기존 배수로 규격에 따라 맞춤 제작이 가능합니다. 현장 방문 측량 후 정확한 규격을 산출해 드립니다.</div>
+              </div>
+              <div class="faq-item">
+                <div class="faq-q">조달청으로 구매할 수 있나요? <span>▼ 열기</span></div>
+                <div class="faq-a" style="display:none;">네, 조달청 나라장터에 등록된 제품입니다. 물품식별번호를 통해 공공기관 구매가 가능합니다. 자세한 내용은 문의해 주세요.</div>
+              </div>
+              <div class="faq-item">
+                <div class="faq-q">대량 납품 할인이 가능한가요? <span>▼ 열기</span></div>
+                <div class="faq-a" style="display:none;">100㎡ 이상 대량 주문 시 별도 단가 협의가 가능합니다. 조경·건설 업체의 경우 파트너십 계약도 검토해 드립니다.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 문의 폼 -->
+          <div>
+            <div class="contact-card">
+              <div class="contact-card-title">💬 일반 문의</div>
+              <div class="form-group">
+                <label class="form-label">이름 <span class="required">*</span></label>
+                <input class="form-input" type="text" placeholder="홍길동">
+              </div>
+              <div class="form-group">
+                <label class="form-label">연락처 <span class="required">*</span></label>
+                <input class="form-input" type="tel" placeholder="010-0000-0000">
+              </div>
+              <div class="form-group">
+                <label class="form-label">문의 유형</label>
+                <select class="form-input">
+                  <option>제품 문의</option>
+                  <option>견적 문의</option>
+                  <option>A/S 신청</option>
+                  <option>조달청 구매</option>
+                  <option>기타</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">문의 내용 <span class="required">*</span></label>
+                <textarea class="form-input" rows="4" placeholder="문의하실 내용을 입력해 주세요" style="resize:vertical;"></textarea>
+              </div>
+              <button class="submit-btn">문의 접수하기</button>
+            </div>
+
+            <div style="margin-top:16px; background:var(--green-bg); border:1px solid var(--green-pale); border-radius:10px; padding:16px;">
+              <div style="font-size:13px; font-weight:700; color:var(--dark); margin-bottom:10px;">📞 직접 연락</div>
+              <div style="font-size:20px; font-weight:900; color:var(--green); margin-bottom:4px;">031-239-3001</div>
+              <div style="font-size:11px; color:var(--gray);">평일 09:00 ~ 18:00 (점심 12:00~13:00)</div>
+              <div class="kakao-box" style="margin-top:12px;">
+                <div class="kakao-icon">💬</div>
+                <div><div class="kakao-text">카카오톡 채널 상담</div><div class="kakao-sub">실시간 빠른 답변</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="wf-footer"><div class="wf-footer-bottom"><div class="wf-footer-copy">© 2025 월드탑믹스(주)</div></div></div>
+      </div>
+
+      <!-- ════ PAGE: 절감 계산기 ════ -->
+      <div class="page" id="page-savings">
+        <div class="wf-nav">
+          <div class="wf-logo"></div>
+          <div class="wf-nav-links"><div class="wf-nav-link"></div><div class="wf-nav-link"></div><div class="wf-nav-link"></div><div class="wf-nav-link"></div></div>
+          <div class="wf-cta-nav">견적 받기 →</div>
+        </div>
+
+        <div class="page-hero-small" style="background: linear-gradient(135deg, #1A2310, #2D4A1A);">
+          <div class="page-breadcrumb">홈 › 절감 효과 계산기</div>
+          <div class="page-h1">💰 유지보수 비용 절감 계산기</div>
+          <div class="page-h1-sub">투수 그레이팅 설치 후 <strong style="color:#B7E4C7;">연간 얼마를 절감</strong>할 수 있는지 직접 계산해 보세요.<br>시세 기준 추정치이며, 실제 절감액은 현장에 따라 다를 수 있습니다.</div>
+        </div>
+
+        <div class="savings-layout">
+          <!-- 메인 계산기 -->
+          <div class="savings-main">
+
+            <!-- STEP 1: 시설 유형 -->
+            <div class="quote-section-title">① 시설 유형을 선택하세요</div>
+            <div class="quote-section-sub" style="margin-bottom:16px;">선택한 유형에 맞는 평균 유지보수 시세가 자동으로 입력됩니다</div>
+            <div class="facility-grid">
+              <div class="facility-card selected" onclick="selectFacility(this, 'school')">
+                <div class="facility-icon">🏫</div>
+                <div><div class="facility-name">학교 · 체육시설</div><div class="facility-ex">운동장, 체육관, 강당 주변</div></div>
+              </div>
+              <div class="facility-card" onclick="selectFacility(this, 'park')">
+                <div class="facility-icon">🌳</div>
+                <div><div class="facility-name">공원 · 산책로</div><div class="facility-ex">도심 공원, 근린공원, 생태공원</div></div>
+              </div>
+              <div class="facility-card" onclick="selectFacility(this, 'apt')">
+                <div class="facility-icon">🏠</div>
+                <div><div class="facility-name">아파트 · 공동주택</div><div class="facility-ex">단지 내 배수로, 지하주차장 주변</div></div>
+              </div>
+              <div class="facility-card" onclick="selectFacility(this, 'commercial')">
+                <div class="facility-icon">🏢</div>
+                <div><div class="facility-name">상가 · 건물</div><div class="facility-ex">건물 외부, 주차장, 호텔 및 상가 등 상업시설</div></div>
+              </div>
+            </div>
+
+            <!-- STEP 2: 현재 유지비 입력 -->
+            <div class="cost-input-section">
+              <div class="cost-input-title">② 현재 연간 유지보수 비용을 입력하세요</div>
+              <div class="cost-input-sub">
+                💡 아래 금액은 <strong>시설 유형별 평균 시세 기준</strong>으로 자동 입력됩니다. 실제 비용으로 직접 수정하시면 더 정확한 결과를 얻을 수 있습니다.
+              </div>
+
+              <div class="cost-row">
+                <div class="cost-label">배수로·그레이팅 청소 용역<small>이물질 제거, 담배꽁초 수거, 악취 방지</small></div>
+                <div class="cost-freq" id="freq-cleaning">연 3회</div>
+                <div class="cost-input-field">
+                  <input type="number" id="cost-cleaning" value="450" oninput="calcSavings()">
+                  <span>만원/년</span>
+                </div>
+                <div class="cost-toggle">
+                  <button class="toggle-btn on" id="tog-cleaning" onclick="toggleCost('cleaning')">포함</button>
+                </div>
+              </div>
+
+              <div class="cost-row">
+                <div class="cost-label">하수도 준설·정비<small>토사·쓰레기로 막힌 하수관 청소</small></div>
+                <div class="cost-freq" id="freq-drain">연 1~2회</div>
+                <div class="cost-input-field">
+                  <input type="number" id="cost-drain" value="280" oninput="calcSavings()">
+                  <span>만원/년</span>
+                </div>
+                <div class="cost-toggle">
+                  <button class="toggle-btn on" id="tog-drain" onclick="toggleCost('drain')">포함</button>
+                </div>
+              </div>
+
+              <div class="cost-row">
+                <div class="cost-label">민원 처리 및 행정 비용<small>악취·위생 민원, 안전사고 대응</small></div>
+                <div class="cost-freq" id="freq-civil">연간</div>
+                <div class="cost-input-field">
+                  <input type="number" id="cost-civil" value="120" oninput="calcSavings()">
+                  <span>만원/년</span>
+                </div>
+                <div class="cost-toggle">
+                  <button class="toggle-btn on" id="tog-civil" onclick="toggleCost('civil')">포함</button>
+                </div>
+              </div>
+
+              <div class="cost-row">
+                <div class="cost-label">안전사고 관련 비용<small>끼임·미끄럼 사고, 시설물 파손 처리</small></div>
+                <div class="cost-freq" id="freq-accident">연간</div>
+                <div class="cost-input-field">
+                  <input type="number" id="cost-accident" value="80" oninput="calcSavings()">
+                  <span>만원/년</span>
+                </div>
+                <div class="cost-toggle">
+                  <button class="toggle-btn" id="tog-accident" onclick="toggleCost('accident')">미포함</button>
+                </div>
+              </div>
+
+              <div class="cost-row">
+                <div class="cost-label">기타 (직접 입력)<small>해충 방제, 악취 제거제, 기타 관리비</small></div>
+                <div class="cost-freq">연간</div>
+                <div class="cost-input-field">
+                  <input type="number" id="cost-etc" value="0" oninput="calcSavings()">
+                  <span>만원/년</span>
+                </div>
+                <div class="cost-toggle">
+                  <button class="toggle-btn on" id="tog-etc" onclick="toggleCost('etc')">포함</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- STEP 3: 설치 면적 + 수명 -->
+            <div class="area-savings-row">
+              <div class="area-savings-box">
+                <div class="area-savings-label">③ 설치 예정 면적</div>
+                <div class="area-savings-input">
+                  <input type="number" id="sav-area" value="100" oninput="calcSavings()">
+                  <span class="area-savings-unit">㎡</span>
+                </div>
+                <div style="font-size:10px; color:var(--gray); margin-top:6px;">* 정확하지 않아도 괜찮습니다</div>
+              </div>
+              <div class="area-savings-box">
+                <div class="area-savings-label">제품 예상 수명</div>
+                <div class="area-savings-input">
+                  <input type="number" id="sav-life" value="15" oninput="calcSavings()">
+                  <span class="area-savings-unit">년</span>
+                </div>
+                <div style="font-size:10px; color:var(--gray); margin-top:6px;">바이오폴리머 소재 반영구 수명 기준</div>
+              </div>
+            </div>
+
+            <!-- 결과 패널 -->
+            <div class="result-panel">
+              <div class="result-title">📊 절감 효과 분석 결과</div>
+              <div class="result-main-grid">
+                <div class="result-item">
+                  <div class="result-item-label">현재 연간 유지비</div>
+                  <div class="result-item-value" id="res-current">850</div>
+                  <div class="result-item-unit">만원/년</div>
+                </div>
+                <div class="result-item">
+                  <div class="result-item-label">설치 후 절감액</div>
+                  <div class="result-item-value accent" id="res-saving">720</div>
+                  <div class="result-item-unit">만원/년 절감 예상</div>
+                </div>
+              </div>
+              <div class="result-divider"></div>
+              <div class="result-row"><span>예상 설치 비용 (기본형 기준)</span><strong id="res-install">400만원</strong></div>
+              <div class="result-row"><span>수명 기간 총 절감액 (<span id="res-life-label">15</span>년)</span><strong id="res-total-saving" style="color:#B7E4C7;">10,800만원</strong></div>
+              <div class="result-row"><span>절감률</span><strong id="res-rate">85%</strong></div>
+              <div class="result-payback">
+                <div>
+                  <div class="result-payback-label">⏱️ 투자 회수 기간</div>
+                  <div style="font-size:10px; color:rgba(255,255,255,0.5); margin-top:2px;">설치 비용 ÷ 연간 절감액</div>
+                </div>
+                <div class="result-payback-value" id="res-payback">약 6.7개월</div>
+              </div>
+            </div>
+
+            <!-- 비교 바 차트 -->
+            <div class="compare-section">
+              <div class="compare-title">📈 연간 비용 비교 (기존 vs 투수 그레이팅)</div>
+              <div class="compare-bar-group">
+                <div class="compare-bar-label">
+                  <span class="compare-bar-name">🔴 기존 그레이팅 유지비</span>
+                  <span class="compare-bar-val" id="bar-before-val">연 850만원</span>
+                </div>
+                <div class="compare-bar-track">
+                  <div class="compare-bar-fill before" id="bar-before" style="width:100%;">기존</div>
+                </div>
+              </div>
+              <div class="compare-bar-group">
+                <div class="compare-bar-label">
+                  <span class="compare-bar-name">🟢 투수 그레이팅 유지비</span>
+                  <span class="compare-bar-val" id="bar-after-val">연 130만원 (경미한 점검)</span>
+                </div>
+                <div class="compare-bar-track">
+                  <div class="compare-bar-fill after" id="bar-after" style="width:15%;">절감 후</div>
+                </div>
+              </div>
+              <div style="font-size:11px; color:var(--gray); margin-top:10px; padding:8px 12px; background:var(--wire-bg); border-radius:6px;">
+                ※ 설치 후 잔여 유지비는 연 1회 정기 점검비(약 5~15만원/회)와 경미한 보수비로 추산. 기존 청소 용역·준설·민원 비용은 대폭 감소합니다.
+              </div>
+            </div>
+
+            <!-- 케이스 스터디 -->
+            <div class="quote-section-title" style="margin-bottom:12px;">📋 실제 절감 사례 (추정치 기반)</div>
+            <div class="case-study-grid">
+              <div class="case-study-card">
+                <div class="cs-left">
+                  <div class="cs-name">🏫 A 중학교 (운동장 주변 배수로 80㎡)</div>
+                  <div class="cs-desc">기존: 청소 용역 연 4회 + 하수도 준설 연 2회 + 악취 민원 대응<br>→ 설치 후 용역 0회, 준설 주기 3년→없음, 민원 0건</div>
+                </div>
+                <div class="cs-right">
+                  <div class="cs-saving">연 680만원</div>
+                  <div class="cs-saving-label">절감 추정</div>
+                </div>
+              </div>
+              <div class="case-study-card">
+                <div class="cs-left">
+                  <div class="cs-name">🌳 B 근린공원 (산책로·배수로 150㎡)</div>
+                  <div class="cs-desc">기존: 낙엽·담배꽁초 그레이팅 막힘으로 긴급 준설 연 3회<br>→ 설치 후 오물 유입 차단, 준설 작업 불필요</div>
+                </div>
+                <div class="cs-right">
+                  <div class="cs-saving">연 950만원</div>
+                  <div class="cs-saving-label">절감 추정</div>
+                </div>
+              </div>
+              <div class="case-study-card">
+                <div class="cs-left">
+                  <div class="cs-name">🏠 C 아파트 단지 (지하주차장 진입로 60㎡)</div>
+                  <div class="cs-desc">기존: 관리비에서 연간 청소·보수 비용 지출, 입주민 민원 반복<br>→ 설치 후 관리비 절감, 민원 0건, 입주민 만족도 향상</div>
+                </div>
+                <div class="cs-right">
+                  <div class="cs-saving">연 420만원</div>
+                  <div class="cs-saving-label">절감 추정</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 절감 항목 — 영수증 스타일 -->
+            <div style="background:#fff; border-radius:12px; border:1px solid var(--wire-box); overflow:hidden; margin-bottom:20px; box-shadow: 0 4px 20px rgba(0,0,0,0.06);">
+
+              <!-- 영수증 헤더 -->
+              <div style="background:var(--dark); padding:16px 24px; text-align:center;">
+                <div style="font-size:10px; color:#64748B; letter-spacing:0.15em; text-transform:uppercase; margin-bottom:4px; font-family:'DM Sans',sans-serif;">COST SAVINGS RECEIPT</div>
+                <div style="font-size:15px; font-weight:800; color:#fff; letter-spacing:-0.01em;">투수 그레이팅 설치 후 절감 내역</div>
+                <div style="font-size:10px; color:#475569; margin-top:4px;">설치 완료일 기준 · 연간 추정치</div>
+              </div>
+
+              <!-- 상단 지그재그 절취선 -->
+              <div style="height:10px; background: radial-gradient(circle at 10px -2px, #f8f9fa 8px, var(--dark) 8px); background-size:20px 10px; background-color:var(--dark);"></div>
+
+              <!-- 영수증 바디 -->
+              <div style="padding:20px 24px;">
+
+                <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--gray); padding-bottom:10px; border-bottom:1px dashed var(--wire-box); margin-bottom:4px; letter-spacing:0.06em; font-weight:600; text-transform:uppercase;">
+                  <span>절감 항목</span><span>효과</span>
+                </div>
+
+                <!-- 각 항목 -->
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:11px 0; border-bottom:1px dashed var(--wire-box);">
+                  <div style="display:flex; align-items:center; gap:12px;">
+                    <div style="width:34px; height:34px; border-radius:50%; background:var(--green-bg); border:1.5px solid var(--green-pale); display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0;">🧹</div>
+                    <div>
+                      <div style="font-size:13px; font-weight:700; color:var(--dark);">청소 용역비</div>
+                      <div style="font-size:10px; color:var(--gray); margin-top:1px;">오물·쓰레기 배수로 유입 차단 → 용역 불필요</div>
+                    </div>
+                  </div>
+                  <div style="text-align:right; flex-shrink:0; margin-left:16px;">
+                    <div style="font-size:15px; font-weight:900; color:var(--green); font-family:'Bebas Neue',sans-serif; letter-spacing:0.03em;">-100%</div>
+                    <div style="font-size:9px; color:var(--gray);">연 3~4회 → 0회</div>
+                  </div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:11px 0; border-bottom:1px dashed var(--wire-box);">
+                  <div style="display:flex; align-items:center; gap:12px;">
+                    <div style="width:34px; height:34px; border-radius:50%; background:var(--green-bg); border:1.5px solid var(--green-pale); display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0;">🚰</div>
+                    <div>
+                      <div style="font-size:13px; font-weight:700; color:var(--dark);">하수도 준설비</div>
+                      <div style="font-size:10px; color:var(--gray); margin-top:1px;">그레이팅 단계 차단 → 하수관 오염 대폭 감소</div>
+                    </div>
+                  </div>
+                  <div style="text-align:right; flex-shrink:0; margin-left:16px;">
+                    <div style="font-size:15px; font-weight:900; color:var(--green); font-family:'Bebas Neue',sans-serif; letter-spacing:0.03em;">대폭 감소</div>
+                    <div style="font-size:9px; color:var(--gray);">연 1~2회 → 주기 연장</div>
+                  </div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:11px 0; border-bottom:1px dashed var(--wire-box);">
+                  <div style="display:flex; align-items:center; gap:12px;">
+                    <div style="width:34px; height:34px; border-radius:50%; background:var(--green-bg); border:1.5px solid var(--green-pale); display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0;">📞</div>
+                    <div>
+                      <div style="font-size:13px; font-weight:700; color:var(--dark);">민원·행정 처리비</div>
+                      <div style="font-size:10px; color:var(--gray); margin-top:1px;">악취·해충·담배꽁초 민원 소멸 → 행정 부담 제거</div>
+                    </div>
+                  </div>
+                  <div style="text-align:right; flex-shrink:0; margin-left:16px;">
+                    <div style="font-size:15px; font-weight:900; color:var(--green); font-family:'Bebas Neue',sans-serif; letter-spacing:0.03em;">-100%</div>
+                    <div style="font-size:9px; color:var(--gray);">민원 건수 → 0건</div>
+                  </div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:11px 0; border-bottom:1px dashed var(--wire-box);">
+                  <div style="display:flex; align-items:center; gap:12px;">
+                    <div style="width:34px; height:34px; border-radius:50%; background:var(--green-bg); border:1.5px solid var(--green-pale); display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0;">🚑</div>
+                    <div>
+                      <div style="font-size:13px; font-weight:700; color:var(--dark);">안전사고 배상 리스크</div>
+                      <div style="font-size:10px; color:var(--gray); margin-top:1px;">하이힐·휠체어 끼임 방지 → 배상 책임 리스크 소멸</div>
+                    </div>
+                  </div>
+                  <div style="text-align:right; flex-shrink:0; margin-left:16px;">
+                    <div style="font-size:15px; font-weight:900; color:var(--green); font-family:'Bebas Neue',sans-serif; letter-spacing:0.03em;">리스크 제거</div>
+                    <div style="font-size:9px; color:var(--gray);">사고 가능성 → 0</div>
+                  </div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:11px 0;">
+                  <div style="display:flex; align-items:center; gap:12px;">
+                    <div style="width:34px; height:34px; border-radius:50%; background:var(--green-bg); border:1.5px solid var(--green-pale); display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0;">🌿</div>
+                    <div>
+                      <div style="font-size:13px; font-weight:700; color:var(--dark);">환경 부담금</div>
+                      <div style="font-size:10px; color:var(--gray); margin-top:1px;">오염물질 유입 감소 → 환경 비용 장기 절감</div>
+                    </div>
+                  </div>
+                  <div style="text-align:right; flex-shrink:0; margin-left:16px;">
+                    <div style="font-size:15px; font-weight:900; color:var(--green); font-family:'Bebas Neue',sans-serif; letter-spacing:0.03em;">장기 절감</div>
+                    <div style="font-size:9px; color:var(--gray);">수명 기간 누적 효과</div>
+                  </div>
+                </div>
+
+                <!-- 합계 -->
+                <div style="margin-top:12px; border-top:2px solid var(--dark); padding-top:14px; display:flex; flex-direction:column; gap:7px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:12px; color:var(--gray);">설치 전 연간 유지비</span>
+                    <span style="font-size:14px; font-weight:700; color:#EF4444; text-decoration:line-through;" id="receipt-before">연 850만원</span>
+                  </div>
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:12px; color:var(--gray);">설치 후 잔여 유지비</span>
+                    <span style="font-size:14px; font-weight:700; color:var(--gray);" id="receipt-after">연 약 130만원</span>
+                  </div>
+                  <div style="display:flex; justify-content:space-between; align-items:center; background:var(--green-bg); border:1px solid var(--green-pale); border-radius:8px; padding:12px 14px; margin-top:4px;">
+                    <div>
+                      <div style="font-size:13px; font-weight:800; color:var(--green);">💰 연간 절감 합계</div>
+                      <div style="font-size:10px; color:var(--gray); margin-top:2px;">추정치 기준 · 현장에 따라 상이</div>
+                    </div>
+                    <div style="font-size:24px; font-weight:900; color:var(--green); font-family:'Bebas Neue',sans-serif; letter-spacing:0.02em;" id="receipt-saving">720만원</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 하단 지그재그 절취선 -->
+              <div style="height:10px; background: radial-gradient(circle at 10px 12px, #f8f9fa 8px, #fff 8px); background-size:20px 10px; background-color:#fff;"></div>
+              <div style="background:var(--wire-bg); padding:10px; text-align:center; font-size:10px; color:var(--wire-dark); letter-spacing:0.04em; border-top:1px solid var(--wire-box);">
+                ※ 업계 평균 시세 기준 추정치 · 실제 절감액은 시설·규모에 따라 다를 수 있습니다
+              </div>
+            </div>
+
+          </div>
+
+          <!-- 사이드바 -->
+          <div class="savings-sidebar">
+            <div class="sidebar-title">🎯 이런 분께 추천</div>
+            <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:20px;">
+              <div style="background:var(--green-bg); border-radius:8px; padding:10px 12px; font-size:12px; color:var(--dark); line-height:1.6;">
+                ✅ <strong>학교·관공서 담당자</strong><br>예산 절감 근거 자료가 필요한 분
+              </div>
+              <div style="background:var(--green-bg); border-radius:8px; padding:10px 12px; font-size:12px; color:var(--dark); line-height:1.6;">
+                ✅ <strong>아파트 관리소장</strong><br>입주자 대표회의 설득 자료가 필요한 분
+              </div>
+              <div style="background:var(--green-bg); border-radius:8px; padding:10px 12px; font-size:12px; color:var(--dark); line-height:1.6;">
+                ✅ <strong>건물·상가 오너</strong><br>장기 ROI로 투자 결정을 내리는 분
+              </div>
+            </div>
+
+            <div style="border-top:1px solid var(--wire-box); padding-top:16px; margin-bottom:16px;">
+              <div class="sidebar-title">📄 절감 효과 보고서</div>
+              <div style="font-size:12px; color:var(--gray); line-height:1.7; margin-bottom:12px;">입력하신 수치를 기반으로 PDF 보고서를 받아보세요. 발주처·입주자 대표회의 제출용으로 활용할 수 있습니다.</div>
+              <div class="form-group">
+                <label class="form-label">이메일</label>
+                <input class="form-input" type="email" placeholder="보고서 받을 이메일">
+              </div>
+              <button class="submit-btn" style="font-size:13px; padding:12px;">📧 PDF 보고서 받기</button>
+            </div>
+
+            <div style="border-top:1px solid var(--wire-box); padding-top:16px;">
+              <div class="sidebar-title">🔗 다음 단계</div>
+              <div style="font-size:12px; color:var(--gray); line-height:1.7; margin-bottom:12px;">절감 효과를 확인하셨다면, 실제 견적을 받아보세요. 담당자가 현장을 확인하고 정확한 금액을 안내해 드립니다.</div>
+              <button class="submit-btn" onclick="showPage('quote', document.querySelector('[onclick*=quote]'))" style="font-size:13px; padding:12px; margin-bottom:8px;">
+                📋 무료 견적 신청하기 →
+              </button>
+              <div class="kakao-box">
+                <div class="kakao-icon">💬</div>
+                <div><div class="kakao-text">카카오톡으로 상담</div><div class="kakao-sub">절감 효과 궁금한 점 문의</div></div>
+              </div>
+            </div>
+
+            <div style="border-top:1px solid var(--wire-box); padding-top:16px; margin-top:16px;">
+              <div class="sidebar-title" style="margin-bottom:8px;">⚠️ 계산 기준 안내</div>
+              <div style="font-size:11px; color:var(--gray); line-height:1.7; background:var(--wire-bg); border-radius:8px; padding:10px 12px;">
+                본 계산기는 업계 평균 시세 기준의 <strong>참고용 추정치</strong>입니다. 실제 절감액은 시설 규모·위치·현재 계약 조건에 따라 다를 수 있습니다.<br><br>
+                <strong>유지비 시세 기준</strong><br>
+                · 그레이팅 청소 용역: 1회 10~30만원<br>
+                · 하수도 준설: 1회 50~150만원<br>
+                · 민원 처리: 건당 2~5만원 추산
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 홈 문제 제기 섹션 어필 배너 -->
+        <div class="cta-banner" style="background: linear-gradient(135deg, #1A2310, #2D5016);">
+          <div class="cta-text">
+            <div class="cta-title">설치 비용보다 절감액이 더 큽니다</div>
+            <div class="cta-sub">대부분의 현장에서 <strong style="color:#B7E4C7;">1년 내 투자금 회수</strong>가 가능합니다.<br>지금 바로 현장 맞춤 견적을 받아보세요.</div>
+          </div>
+          <div class="cta-actions">
+            <button class="btn-white" onclick="showPage('quote', document.querySelector('[onclick*=quote]'))">📋 견적 받기</button>
+            <button class="btn-outline-white">📧 보고서 받기</button>
+          </div>
+        </div>
+
+        <div class="wf-footer"><div class="wf-footer-bottom"><div class="wf-footer-copy">© 2025 월드탑믹스(주)</div></div></div>
+      </div>
+
+    </div><!-- /browser-screen -->
+  </div><!-- /browser-wrap -->
+</div><!-- /stage -->
+
+<!-- 플로팅 견적 버튼 -->
+<button class="floating-quote" onclick="showPage('quote', document.querySelector('[onclick*=quote]'))">
+  📋 무료 견적 받기
+</button>
+
+<script>
+const urls = {
+  home: 'worldtopgrating.co.kr',
+  products: 'worldtopgrating.co.kr/products',
+  cases: 'worldtopgrating.co.kr/cases',
+  quote: 'worldtopgrating.co.kr/quote',
+  complete: 'worldtopgrating.co.kr/quote/complete',
+  about: 'worldtopgrating.co.kr/about',
+  support: 'worldtopgrating.co.kr/support',
+  savings: 'worldtopgrating.co.kr/savings'
+};
+
+const annos = {
+  home: '🏠 <strong>홈 페이지</strong><br>히어로 → 문제 제기 → 제품 미리보기 → 시공사례 → CTA 배너 순으로 구성. 모든 섹션에서 견적으로 유도.',
+  products: '📦 <strong>제품 소개</strong><br>탭 방식으로 3개 제품 전환. 각 제품별 특장점, 규격표, 규격서 PDF 다운로드 제공.',
+  cases: '🏗️ <strong>시공사례</strong><br>카테고리 필터 + Before/After 카드 갤러리. 신뢰 구축을 위한 핵심 페이지.',
+  quote: '💰 <strong>견적 신청 (핵심)</strong><br>4단계 흐름: 장소유형 → 제품+면적 → 현장정보 → 연락처. 면적 입력 즉시 자동 견적 계산.',
+  complete: '✅ <strong>견적 완료</strong><br>접수 확인 + 접수 요약 표시. 카카오 알림톡 발송 안내. 채널 추가 CTA.',
+  about: '🏢 <strong>회사소개</strong><br>브랜드 스토리 → 핵심가치 → 인증현황 → 연혁 → 오시는 길 순서.',
+  support: '📞 <strong>고객센터</strong><br>FAQ (아코디언) + 문의 폼 + 직접 연락처. 자주 묻는 질문 6개 기본 탑재.',
+  savings: '💰 <strong>절감 계산기</strong><br>시설 유형 선택 → 유지비 입력 → 면적 입력 → 연간 절감액·투자 회수 기간 자동 계산. PDF 보고서 다운로드 + 견적 CTA 연결.'
+};
+
+const flowItems = document.querySelectorAll('.flow-item');
+
+function showPage(name, btn) {
+  // 모든 페이지 숨기기
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  // 툴바 버튼
+  document.querySelectorAll('.page-btn').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  // URL 업데이트
+  document.getElementById('url-bar').textContent = '🔒 ' + urls[name];
+  // 어노테이션 업데이트
+  document.getElementById('anno-box').innerHTML = '<strong>💡 현재 페이지</strong>' + annos[name];
+  // 스크롤 상단으로
+  document.querySelector('.browser-screen').scrollTop = 0;
+  window.scrollTo(0, 0);
+}
+
+// 장소 유형 선택
+function selectType(card) {
+  document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+}
+
+// 제품 단가 데이터
+const products = {
+  0: { name: '기본형 그레이팅', pprice: 25000, wprice: 15000 },
+  1: { name: '데크형 그레이팅', pprice: 32000, wprice: 18000 },
+  2: { name: '발지압형 그레이팅', pprice: 38000, wprice: 18000 }
+};
+let currentProduct = 0;
+
+function selectProduct(card, pprice, wprice) {
+  document.querySelectorAll('.product-select-card').forEach((c, i) => {
+    c.classList.remove('selected');
+    if(c === card) currentProduct = i;
+  });
+  card.classList.add('selected');
+  calcQuote();
+}
+
+function calcFromWH() {
+  const w = parseFloat(document.getElementById('area-w').value) || 0;
+  const h = parseFloat(document.getElementById('area-h').value) || 0;
+  document.getElementById('area-sqm').value = (w * h).toFixed(1);
+  calcQuote();
+}
+
+function calcQuote() {
+  const area = parseFloat(document.getElementById('area-sqm').value) || 0;
+  const p = products[currentProduct];
+  const pamount = area * p.pprice;
+  const wamount = area * p.wprice;
+  const total = pamount + wamount;
+
+  document.getElementById('qp-product').textContent = p.name;
+  document.getElementById('qp-area').textContent = area + ' ㎡';
+  document.getElementById('qp-pprice').textContent = '₩' + p.pprice.toLocaleString() + '/㎡';
+  document.getElementById('qp-pamount').textContent = '₩' + pamount.toLocaleString();
+  document.getElementById('qp-wprice').textContent = '₩' + p.wprice.toLocaleString() + '/㎡';
+  document.getElementById('qp-wamount').textContent = '₩' + wamount.toLocaleString();
+  document.getElementById('qp-total').textContent = '₩' + total.toLocaleString();
+}
+
+// 필터 버튼
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+// FAQ 아코디언
+document.querySelectorAll('.faq-q').forEach(q => {
+  q.addEventListener('click', () => {
+    const item = q.parentElement;
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => {
+      i.classList.remove('open');
+      i.querySelector('.faq-a').style.display = 'none';
+      i.querySelector('.faq-q span').textContent = '▼ 열기';
+    });
+    if(!isOpen) {
+      item.classList.add('open');
+      item.querySelector('.faq-a').style.display = 'block';
+      q.querySelector('span').textContent = '▲ 닫기';
+    }
+  });
+});
+
+// 제품 탭
+document.querySelectorAll('.product-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.product-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+  });
+});
+
+// 시설 유형별 기본 유지비 시세
+const facilityDefaults = {
+  school:     { cleaning: 450, drain: 280, civil: 120, accident: 80,  freq_cleaning: '연 3~4회', freq_drain: '연 1~2회' },
+  park:       { cleaning: 600, drain: 350, civil: 90,  accident: 50,  freq_cleaning: '연 4~6회', freq_drain: '연 2회' },
+  apt:        { cleaning: 320, drain: 200, civil: 150, accident: 100, freq_cleaning: '연 2~3회', freq_drain: '연 1회' },
+  commercial: { cleaning: 380, drain: 250, civil: 80,  accident: 60,  freq_cleaning: '연 2~4회', freq_drain: '연 1~2회' },
+};
+
+const costToggles = { cleaning: true, drain: true, civil: true, accident: false, etc: true };
+
+function selectFacility(card, type) {
+  document.querySelectorAll('.facility-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  const d = facilityDefaults[type];
+  document.getElementById('cost-cleaning').value = d.cleaning;
+  document.getElementById('cost-drain').value = d.drain;
+  document.getElementById('cost-civil').value = d.civil;
+  document.getElementById('cost-accident').value = d.accident;
+  document.getElementById('freq-cleaning').textContent = d.freq_cleaning;
+  document.getElementById('freq-drain').textContent = d.freq_drain;
+  calcSavings();
+}
+
+function toggleCost(key) {
+  costToggles[key] = !costToggles[key];
+  const btn = document.getElementById('tog-' + key);
+  if (costToggles[key]) {
+    btn.classList.add('on');
+    btn.textContent = '포함';
+  } else {
+    btn.classList.remove('on');
+    btn.textContent = '미포함';
+  }
+  calcSavings();
+}
+
+function calcSavings() {
+  const get = id => parseFloat(document.getElementById(id)?.value) || 0;
+
+  // 포함된 항목만 합산
+  const cleaning  = costToggles.cleaning  ? get('cost-cleaning')  : 0;
+  const drain     = costToggles.drain     ? get('cost-drain')     : 0;
+  const civil     = costToggles.civil     ? get('cost-civil')     : 0;
+  const accident  = costToggles.accident  ? get('cost-accident')  : 0;
+  const etc       = costToggles.etc       ? get('cost-etc')       : 0;
+
+  const totalCurrent = cleaning + drain + civil + accident + etc;
+  // 설치 후 잔여 유지비: 연 1~2회 경미한 점검 (면적 × 1000원 추산, 최소 10만)
+  const area = get('sav-area');
+  const lifeYears = get('sav-life') || 15;
+  const residual = Math.max(10, Math.round(area * 0.1)); // 만원
+  const annualSaving = Math.max(0, totalCurrent - residual);
+  const rate = totalCurrent > 0 ? Math.round((annualSaving / totalCurrent) * 100) : 0;
+
+  // 설치 비용 추산 (기본형 기준: 제품 25,000 + 시공 15,000 = 40,000원/㎡)
+  const installCost = Math.round(area * 4); // 만원 단위 (40,000원/㎡ = 4만원/㎡)
+  const totalSaving = annualSaving * lifeYears;
+
+  // 투자 회수 기간
+  let paybackText = '-';
+  if (annualSaving > 0) {
+    const months = (installCost / annualSaving) * 12;
+    if (months < 12) paybackText = `약 ${months.toFixed(1)}개월`;
+    else paybackText = `약 ${(months / 12).toFixed(1)}년`;
+  }
+
+  // 결과 업데이트
+  document.getElementById('res-current').textContent = totalCurrent.toLocaleString();
+  document.getElementById('res-saving').textContent = annualSaving.toLocaleString();
+  document.getElementById('res-install').textContent = installCost.toLocaleString() + '만원';
+  document.getElementById('res-total-saving').textContent = totalSaving.toLocaleString() + '만원';
+  document.getElementById('res-life-label').textContent = lifeYears;
+  document.getElementById('res-rate').textContent = rate + '%';
+  document.getElementById('res-payback').textContent = paybackText;
+
+  // 영수증 합계 연동
+  document.getElementById('receipt-before').textContent = '연 ' + totalCurrent.toLocaleString() + '만원';
+  document.getElementById('receipt-after').textContent = '연 약 ' + residual.toLocaleString() + '만원';
+  document.getElementById('receipt-saving').textContent = annualSaving.toLocaleString() + '만원';
+
+  // 바 차트
+  document.getElementById('bar-before-val').textContent = '연 ' + totalCurrent.toLocaleString() + '만원';
+  document.getElementById('bar-after-val').textContent = '연 ' + residual.toLocaleString() + '만원 (경미한 점검)';
+  const afterPct = totalCurrent > 0 ? Math.max(4, Math.round((residual / totalCurrent) * 100)) : 4;
+  document.getElementById('bar-after').style.width = afterPct + '%';
+}
+
+// 초기 계산 실행
+calcSavings();
+</script>
+</body>
+</html>
